@@ -208,6 +208,11 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .teamrow .tname { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .teamrow .trank { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); flex: 0 0 auto; background: var(--bg); border-radius: 5px; padding: 1px 5px; }
 .teamrow .tscore { font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 18px; margin-left: auto; }
+.teamrow .tscore.livesc { color: var(--coral); }
+.stage-tag .soon { animation: livepulse 1.6s ease-in-out infinite; }
+@keyframes livepulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.kick .vtime.asof { color: var(--coral); }
+.kick .vtime.asof b { color: var(--coral); }
 .teamrow.tbd .tname { color: var(--ink-soft); font-weight: 600; font-size: 14px; white-space: normal; }
 
 .kick {

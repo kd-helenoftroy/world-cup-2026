@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /* =====================================================
    update-scores.mjs
-   Fetches final scores from ESPN's public World Cup
-   scoreboard and writes them to scores.json, keyed by
-   the match IDs in js/data.js. Run by GitHub Actions
+   Fetches scores from ESPN's public World Cup scoreboard
+   and writes them to scores.json, keyed by the match IDs
+   in js/data.js. Finals are stored as [home, away]; games
+   still in progress are stored as { score, live, asOf, clock }
+   snapshots that the site labels with their fetch time. Run by GitHub Actions
    on a schedule; safe to run locally too:
      node scripts/update-scores.mjs
    ===================================================== */
@@ -58,8 +60,10 @@ export function mapEvents(events, MATCHES, nameMap) {
   for (const ev of events || []) {
     const comp = ev.competitions?.[0];
     if (!comp) continue;
-    const finished = comp.status?.type?.completed ?? ev.status?.type?.completed;
-    if (!finished) continue;
+    const status = comp.status ?? ev.status ?? {};
+    const finished = status.type?.completed === true;
+    const inProgress = !finished && status.type?.state === "in";
+    if (!finished && !inProgress) continue; // skip games that haven't kicked off
 
     const sides = comp.competitors || [];
     const home = sides.find((c) => c.homeAway === "home");
@@ -90,8 +94,19 @@ export function mapEvents(events, MATCHES, nameMap) {
     if (Number.isNaN(hGoals) || Number.isNaN(aGoals)) continue;
 
     // store in OUR home/away order
-    found[match.id] = match.home === hCode ? [hGoals, aGoals] : [aGoals, hGoals];
-    console.log(`  ✓ match ${match.id}: ${match.home} ${found[match.id][0]}–${found[match.id][1]} ${match.away}`);
+    const pair = match.home === hCode ? [hGoals, aGoals] : [aGoals, hGoals];
+    if (finished) {
+      found[match.id] = pair;
+      console.log(`  ✓ FINAL match ${match.id}: ${match.home} ${pair[0]}–${pair[1]} ${match.away}`);
+    } else {
+      found[match.id] = {
+        score: pair,
+        live: true,
+        asOf: new Date().toISOString(),
+        clock: status.displayClock || null, // e.g. "67'"
+      };
+      console.log(`  ● LIVE match ${match.id}: ${match.home} ${pair[0]}–${pair[1]} ${match.away} (${status.displayClock || "in progress"})`);
+    }
   }
   return found;
 }
@@ -112,7 +127,10 @@ async function main() {
   const pendingDates = [
     ...new Set(
       MATCHES.filter(
-        (m) => new Date(m.t).getTime() < now && !Array.isArray(m.score) && !existing[m.id]
+        (m) =>
+          new Date(m.t).getTime() < now &&
+          !Array.isArray(m.score) &&
+          !Array.isArray(existing[m.id]) // no entry, or just a live snapshot -> keep checking
       ).flatMap((m) => {
         const d = new Date(m.t);
         // ESPN groups games by calendar date; a late-ET kickoff falls on the
@@ -154,7 +172,7 @@ async function main() {
     return;
   }
   writeFileSync(outPath, JSON.stringify(merged, null, 2) + "\n");
-  console.log(`Wrote ${Object.keys(updates).length} new score(s) to scores.json`);
+  console.log(`Wrote ${Object.keys(updates).length} update(s) to scores.json`);
 }
 
 // run only when executed directly (not when imported by tests)

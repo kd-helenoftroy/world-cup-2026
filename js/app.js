@@ -159,11 +159,12 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   const done = Array.isArray(m.score);
   const ko = new Date(m.t);
   const now = new Date();
-  const live = !done && now >= ko && now - ko < 2.5 * 3600 * 1000;
+  const liveSnap = !done && Array.isArray(m.liveScore);
+  const live = !done && (liveSnap || (now >= ko && now - ko < 2.5 * 3600 * 1000));
 
   let statusChip = "";
   if (done) statusChip = `<span class="ft">FT</span>`;
-  else if (live) statusChip = `<span class="soon">● LIVE</span>`;
+  else if (live) statusChip = `<span class="soon">● LIVE${m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
   else if (relDay(m.t) === "Today") statusChip = `<span class="soon">TODAY</span>`;
 
   let teamsHTML;
@@ -171,23 +172,29 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     teamsHTML = `<div class="teamrow tbd"><span class="tname">${m.label}</span></div>`;
   } else {
     const H = TEAMS[m.home], A = TEAMS[m.away];
+    const sc = done ? m.score : liveSnap ? m.liveScore : null;
+    const scClass = liveSnap && !done ? "tscore livesc" : "tscore";
     teamsHTML = `
       <div class="teamrow">
         <img src="${FLAG(H.flag)}" alt="${H.name} flag" loading="lazy">
         <span class="tname">${H.name}</span><span class="trank">#${H.rank}</span>
-        ${done ? `<span class="tscore">${m.score[0]}</span>` : ""}
+        ${sc ? `<span class="${scClass}">${sc[0]}</span>` : ""}
       </div>
       <div class="teamrow">
         <img src="${FLAG(A.flag)}" alt="${A.name} flag" loading="lazy">
         <span class="tname">${A.name}</span><span class="trank">#${A.rank}</span>
-        ${done ? `<span class="tscore">${m.score[1]}</span>` : ""}
+        ${sc ? `<span class="${scClass}">${sc[1]}</span>` : ""}
       </div>`;
   }
 
   const localT = fmtTime(m.t);
   const stadiumT = fmtTime(m.t, v.tz);
-  const stadiumLine = stadiumT !== localT
+  let stadiumLine = stadiumT !== localT
     ? `<span class="vtime"><b>${stadiumT}</b> at the stadium</span>` : "";
+  if (liveSnap && m.liveAsOf) {
+    const asOf = new Date(m.liveAsOf).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    stadiumLine = `<span class="vtime asof">score as of <b>${asOf}</b></span>`;
+  }
 
   let predHTML = "";
   if (showPred && !isKO && !done) {
@@ -668,7 +675,14 @@ async function loadLiveScores() {
     const scores = await res.json();
     for (const [id, s] of Object.entries(scores)) {
       const m = MATCHES.find((x) => x.id === Number(id));
-      if (m && Array.isArray(s) && s.length === 2) m.score = s;
+      if (!m) continue;
+      if (Array.isArray(s) && s.length === 2) {
+        m.score = s; // final
+      } else if (s && s.live && Array.isArray(s.score)) {
+        m.liveScore = s.score; // in-progress snapshot — shown on the ticket,
+        m.liveAsOf = s.asOf;   // but never fed into standings/ratings
+        m.liveClock = s.clock;
+      }
     }
   } catch {
     /* offline / local preview — no problem */
