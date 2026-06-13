@@ -1,4 +1,4 @@
-yamlname: Update scores
+name: Update scores
 
 on:
   schedule:
