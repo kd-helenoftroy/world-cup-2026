@@ -446,17 +446,21 @@ function renderMarkers() {
       });
     }
 
-    const list = shown
-      .map((m) => {
-        const title = m.home ? `${TEAMS[m.home].name} v ${TEAMS[m.away].name}` : m.label;
-        return `<div class="popup-match"><span class="pm-t">${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })} · ${fmtTime(m.t)}</span><br>${m.stage}: ${title}</div>`;
-      })
-      .join("");
-    marker.bindPopup(`
+    const makeList = (ms) => ms.map((m) => {
+      const title = m.home ? `${TEAMS[m.home].name} v ${TEAMS[m.away].name}` : m.label;
+      return `<div class="popup-match"><span class="pm-t">${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })} · ${fmtTime(m.t)}</span><br>${m.stage}: ${title}</div>`;
+    }).join("");
+    const popupHeader = `
       <div class="popup-venue">${teamF && stopNums[key] ? `Stop ${stopNums[key].join(" & ")} · ` : ""}${v.name}</div>
-      <div class="popup-city">${v.city} · ${games.length} match${games.length !== 1 ? "es" : ""}${teamF ? ` for ${TEAMS[teamF].name}` : ""} · cap. ${v.capacity.toLocaleString()}</div>
-      ${list}
-      ${games.length > shown.length ? `<div class="popup-more">+ ${games.length - shown.length} more here</div>` : ""}`);
+      <div class="popup-city">${v.city} · ${games.length} match${games.length !== 1 ? "es" : ""}${teamF ? ` for ${TEAMS[teamF].name}` : ""} · cap. ${v.capacity.toLocaleString()}</div>`;
+    marker.bindPopup(`${popupHeader}${makeList(shown)}${games.length > shown.length ? `<div class="popup-more">+ ${games.length - shown.length} more here</div>` : ""}`);
+    marker.on("popupopen", () => {
+      const el = marker.getPopup().getElement().querySelector(".popup-more");
+      if (!el) return;
+      el.addEventListener("click", () => {
+        marker.setPopupContent(`${popupHeader}${makeList(games)}`);
+      });
+    });
     marker.addTo(markerLayer);
     bounds.push([v.lat, v.lng]);
   });

@@ -266,7 +266,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .popup-city { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
 .popup-match { font-size: 12px; padding: 4px 0; border-top: 1px dashed var(--line); }
 .popup-match .pm-t { font-family: "IBM Plex Mono", monospace; color: var(--pitch); font-weight: 600; }
-.popup-more { font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+.popup-more { font-size: 11px; color: var(--pitch); margin-top: 6px; cursor: pointer; text-decoration: underline; }
 
 /* ---------- path ---------- */
 .path-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
