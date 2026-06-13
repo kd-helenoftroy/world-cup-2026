@@ -658,7 +658,25 @@ function renderWatch(q = "") {
 /* =====================================================
    boot
    ===================================================== */
-document.addEventListener("DOMContentLoaded", () => {
+/* Merge auto-synced results (written by the GitHub Action into scores.json)
+   over the matches before anything renders. Fails silently if the file
+   doesn't exist yet — the site then runs purely off data.js. */
+async function loadLiveScores() {
+  try {
+    const res = await fetch("scores.json", { cache: "no-store" });
+    if (!res.ok) return;
+    const scores = await res.json();
+    for (const [id, s] of Object.entries(scores)) {
+      const m = MATCHES.find((x) => x.id === Number(id));
+      if (m && Array.isArray(s) && s.length === 2) m.score = s;
+    }
+  } catch {
+    /* offline / local preview — no problem */
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadLiveScores();
   refreshModel();
 
   // tabs — each switch re-renders that view so the live model stays current
