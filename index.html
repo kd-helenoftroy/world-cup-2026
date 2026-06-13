@@ -87,7 +87,7 @@
   <!-- ============ PREDICTIONS ============ -->
   <section id="view-predictions" class="view">
     <h3 class="subhead">Who wins each group?</h3>
-    <p class="section-note">Model estimate from team ratings, nudged by results so far — it updates automatically as scores land in <span class="mono">js/data.js</span>. For fun, not betting advice.</p>
+    <p class="section-note">Each team's chances of topping their group, based on team strength and results so far — updated as the tournament unfolds. For fun, not betting advice.</p>
     <div id="groupwin-grid" class="groupwin-grid"></div>
 
     <h3 class="subhead">Live power rankings &amp; title odds</h3>
@@ -115,7 +115,7 @@
 
   <!-- ============ TEAMS ============ -->
   <section id="view-teams" class="view">
-    <p class="section-note">Key players for every squad — age, position and club. Initials stand in for photos (licensed player images aren't freely embeddable); drop a photo URL into <span class="mono">js/data.js</span> to swap any in.</p>
+    <p class="section-note">Key players for every squad — age, position and club.</p>
     <div class="filterbar">
       <label for="teams-team">Team</label>
       <select id="teams-team" class="ctl"></select>
@@ -168,8 +168,8 @@
 
 <footer>
   Schedule per the published FIFA World Cup 26 fixture list. Times convert automatically to your device's timezone (stadium-local time shown alongside).
-  FIFA rankings and ages approximate; odds approximate (US books, June 2026); win-probability bars and group predictions and the power index are a toy model that re-computes from results as they land — none of this is betting advice.
-  Flags via flagcdn · player avatars via DiceBear · map tiles © OpenStreetMap & CARTO. Unofficial fan project — not affiliated with FIFA.
+  Rankings, ages and odds are approximate. Win-probability bars, group predictions and the power index are statistical estimates, updated as results come in — not betting advice.
+  Map tiles © OpenStreetMap &amp; CARTO. Unofficial fan project — not affiliated with FIFA.
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
