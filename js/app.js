@@ -446,19 +446,23 @@ function renderMarkers() {
       });
     }
 
-    const makeList = (ms) => ms.map((m) => {
+    const makeRow = (m, hidden) => {
       const title = m.home ? `${TEAMS[m.home].name} v ${TEAMS[m.away].name}` : m.label;
-      return `<div class="popup-match"><span class="pm-t">${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })} · ${fmtTime(m.t)}</span><br>${m.stage}: ${title}</div>`;
-    }).join("");
+      return `<div class="popup-match${hidden ? " popup-hidden" : ""}"><span class="pm-t">${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })} · ${fmtTime(m.t)}</span><br>${m.stage}: ${title}</div>`;
+    };
     const popupHeader = `
       <div class="popup-venue">${teamF && stopNums[key] ? `Stop ${stopNums[key].join(" & ")} · ` : ""}${v.name}</div>
       <div class="popup-city">${v.city} · ${games.length} match${games.length !== 1 ? "es" : ""}${teamF ? ` for ${TEAMS[teamF].name}` : ""} · cap. ${v.capacity.toLocaleString()}</div>`;
-    marker.bindPopup(`${popupHeader}${makeList(shown)}${games.length > shown.length ? `<div class="popup-more">+ ${games.length - shown.length} more here</div>` : ""}`);
-    marker.on("popupopen", () => {
-      const el = marker.getPopup().getElement().querySelector(".popup-more");
-      if (!el) return;
-      el.addEventListener("click", () => {
-        marker.setPopupContent(`${popupHeader}${makeList(games)}`);
+    const rows = shown.map((m) => makeRow(m, false)).join("") +
+                 games.slice(shown.length).map((m) => makeRow(m, true)).join("");
+    marker.bindPopup(`${popupHeader}${rows}${games.length > shown.length ? `<div class="popup-more">+ ${games.length - shown.length} more here</div>` : ""}`);
+    marker.on("popupopen", (e) => {
+      const moreEl = e.popup.getElement()?.querySelector(".popup-more");
+      if (!moreEl) return;
+      moreEl.addEventListener("click", () => {
+        e.popup.getElement().querySelectorAll(".popup-hidden").forEach((el) => el.classList.remove("popup-hidden"));
+        moreEl.remove();
+        e.popup.update();
       });
     });
     marker.addTo(markerLayer);
