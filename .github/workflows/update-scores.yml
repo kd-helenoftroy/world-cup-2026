@@ -44,5 +44,12 @@ jobs:
           fi
 
       - name: Trigger Vercel redeploy
-        if: steps.push.outputs.changed == 'true' && secrets.VERCEL_DEPLOY_HOOK != ''
-        run: curl -s -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+        if: steps.push.outputs.changed == 'true'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -s -X POST "$HOOK"
+          else
+            echo "VERCEL_DEPLOY_HOOK secret not set, skipping."
+          fi
