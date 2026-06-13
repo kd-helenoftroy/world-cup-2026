@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WC26 — World Cup 2026 Schedule, Map & Predictions</title>
+  <meta name="description" content="Every World Cup 2026 match: calendar & schedule, interactive venue map, title odds, team paths to the final, where to watch, and rosters.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+</head>
+<body>
+
+<header>
+  <div class="wordmark">
+    <h1>World Cup <span class="yr">’26</span></h1>
+    <span class="host-strip">
+      <img src="https://flagcdn.com/w40/ca.png" alt="Canada">
+      <img src="https://flagcdn.com/w40/mx.png" alt="Mexico">
+      <img src="https://flagcdn.com/w40/us.png" alt="United States">
+      48 teams · 16 cities · 104 matches
+    </span>
+  </div>
+  <p class="tagline">June 11 – July 19, 2026. Kickoffs are shown <span class="tz">in your local timezone</span>, with stadium-local time alongside.</p>
+</header>
+
+<nav>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-view="schedule" role="tab">Schedule &amp; Results</button>
+    <button class="tab" data-view="predictions" role="tab">Predictions</button>
+    <button class="tab" data-view="path" role="tab">Path to Victory</button>
+    <button class="tab" data-view="teams" role="tab">Team Rosters</button>
+    <button class="tab" data-view="map" role="tab">Stadium Map</button>
+    <button class="tab" data-view="watch" role="tab">Where to Watch</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ SCHEDULE ============ -->
+  <section id="view-schedule" class="view active">
+    <div id="calendar" class="calwrap" aria-label="Tournament calendar — click a day"></div>
+    <div class="filterbar">
+      <span id="sched-quick">
+        <button class="pill active" data-f="upcoming">Upcoming</button>
+        <button class="pill" data-f="today">Today</button>
+        <button class="pill" data-f="tomorrow">Tomorrow</button>
+        <button class="pill" data-f="week">Next 7 days</button>
+        <button class="pill" data-f="yesterday">Yesterday</button>
+        <button class="pill" data-f="past">All previous</button>
+        <button class="pill" data-f="all">Everything</button>
+      </span>
+      <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
+    </div>
+    <div class="filterbar">
+      <label for="sched-team">Teams</label>
+      <select id="sched-team" class="ctl"></select>
+      <span id="sched-team-chips" class="chips"></span>
+    </div>
+    <div class="filterbar">
+      <label>Groups</label>
+      <span id="sched-groups">
+        <button class="pill" data-g="A">A</button><button class="pill" data-g="B">B</button>
+        <button class="pill" data-g="C">C</button><button class="pill" data-g="D">D</button>
+        <button class="pill" data-g="E">E</button><button class="pill" data-g="F">F</button>
+        <button class="pill" data-g="G">G</button><button class="pill" data-g="H">H</button>
+        <button class="pill" data-g="I">I</button><button class="pill" data-g="J">J</button>
+        <button class="pill" data-g="K">K</button><button class="pill" data-g="L">L</button>
+      </span>
+      <label>Stage</label>
+      <span id="sched-stage">
+        <button class="pill active alt" data-s="all">All</button>
+        <button class="pill alt" data-s="group">Group stage</button>
+        <button class="pill alt" data-s="knockout">Knockout</button>
+      </span>
+    </div>
+    <div id="standings-area"></div>
+    <div id="schedule-list"></div>
+  </section>
+
+  <!-- ============ PREDICTIONS ============ -->
+  <section id="view-predictions" class="view">
+    <h3 class="subhead">Who wins each group?</h3>
+    <p class="section-note">Model estimate from team ratings, nudged by results so far — it updates automatically as scores land in <span class="mono">js/data.js</span>. For fun, not betting advice.</p>
+    <div id="groupwin-grid" class="groupwin-grid"></div>
+
+    <h3 class="subhead">Live power rankings &amp; title odds</h3>
+    <p class="section-note">The power index starts from pre-tournament ratings and updates after every result (▲▼ shows movement so far). Title odds are bookmaker prices (approx. US sportsbooks, June 12 2026) with implied win probability.</p>
+    <div class="tablewrap"><table class="oddstable">
+      <thead><tr><th>#</th><th>Team</th><th>FIFA Rank</th><th>Power index</th><th>Title odds</th><th></th><th>Implied</th></tr></thead>
+      <tbody id="odds-body"></tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ PATH ============ -->
+  <section id="view-path" class="view">
+    <div class="path-controls">
+      <label for="path-team" style="font-weight:800">Team:</label>
+      <select id="path-team" class="ctl"></select>
+      <div class="scenario-toggle" role="group" aria-label="Group finish scenario">
+        <button class="active" data-s="win">Win the group</button>
+        <button data-s="second">Finish 2nd</button>
+      </div>
+    </div>
+    <p id="path-summary" class="section-note"></p>
+    <p class="section-note">Group games are locked in. The Round of 32 tie is set by the official schedule for the chosen scenario; from the Round of 16 onward opponents depend on results across the bracket, so those steps show each round's scheduled dates and venues.</p>
+    <div id="path-rail" class="path-rail"></div>
+  </section>
+
+  <!-- ============ TEAMS ============ -->
+  <section id="view-teams" class="view">
+    <p class="section-note">Key players for every squad — age, position and club. Initials stand in for photos (licensed player images aren't freely embeddable); drop a photo URL into <span class="mono">js/data.js</span> to swap any in.</p>
+    <div class="filterbar">
+      <label for="teams-team">Team</label>
+      <select id="teams-team" class="ctl"></select>
+      <label>Group</label>
+      <span class="groupnav">
+        <button class="pill active" data-g="A">A</button><button class="pill" data-g="B">B</button>
+        <button class="pill" data-g="C">C</button><button class="pill" data-g="D">D</button>
+        <button class="pill" data-g="E">E</button><button class="pill" data-g="F">F</button>
+        <button class="pill" data-g="G">G</button><button class="pill" data-g="H">H</button>
+        <button class="pill" data-g="I">I</button><button class="pill" data-g="J">J</button>
+        <button class="pill" data-g="K">K</button><button class="pill" data-g="L">L</button>
+      </span>
+    </div>
+    <div id="teams-list"></div>
+  </section>
+
+  <!-- ============ MAP ============ -->
+  <section id="view-map" class="view">
+    <div class="filterbar">
+      <label for="map-team">Team</label>
+      <select id="map-team" class="ctl"></select>
+      <label for="map-city">City</label>
+      <select id="map-city" class="ctl"></select>
+      <button id="map-clear" class="clearbtn" disabled>✕ Clear filters</button>
+      <span id="map-count" class="section-note" style="margin:0"></span>
+    </div>
+    <div id="map"></div>
+    <div class="map-legend">
+      <span><span class="dot" style="background:#F0A12E"></span>United States (11 venues)</span>
+      <span><span class="dot" style="background:#168A4E"></span>Mexico (3 venues)</span>
+      <span><span class="dot" style="background:#E4573D"></span>Canada (2 venues)</span>
+      <span>· Tap a marker for that stadium's matches · filter by team to see their stops numbered in order</span>
+    </div>
+  </section>
+
+  <!-- ============ WATCH ============ -->
+  <section id="view-watch" class="view">
+    <p class="section-note">The main broadcasters carrying the tournament in each of the 48 participating countries. In the US that's FOX/FS1 in English (carried by YouTube TV, Fubo and Hulu + Live TV) and Telemundo/Peacock in Spanish. Confirm with local listings — rights for selected matches vary.</p>
+    <input id="watch-search" class="searchbox ctl" type="search" placeholder="Search a country… e.g. Japan" aria-label="Search countries" style="margin-bottom:16px;max-width:380px;width:100%">
+    <div id="watch-grid" class="watch-grid"></div>
+  </section>
+
+
+
+
+
+
+
+</main>
+
+<footer>
+  Schedule per the published FIFA World Cup 26 fixture list. Times convert automatically to your device's timezone (stadium-local time shown alongside).
+  FIFA rankings and ages approximate; odds approximate (US books, June 2026); win-probability bars and group predictions and the power index are a toy model that re-computes from results as they land — none of this is betting advice.
+  Flags via flagcdn · player avatars via DiceBear · map tiles © OpenStreetMap & CARTO. Unofficial fan project — not affiliated with FIFA.
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
