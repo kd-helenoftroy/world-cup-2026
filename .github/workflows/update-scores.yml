@@ -2,7 +2,11 @@ name: Update scores
 
 on:
   schedule:
-    - cron: "7,37 * * * *"
+    # Every 6 minutes between 3 PM and 3 AM UTC (covers all WC2026 kickoffs + finishes)
+    # Earliest kickoff is noon ET = 4 PM UTC; latest finish ~midnight ET = 4 AM UTC.
+    # We bracket generously: 15:00–03:00 UTC. GitHub cron is UTC-only.
+    - cron: "*/6 15-23 * * *"   # 3 PM – 11:54 PM UTC
+    - cron: "*/6 0-3  * * *"    # midnight – 3:54 AM UTC
   workflow_dispatch:
 
 permissions:
@@ -20,7 +24,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Fetch latest final scores
+      - name: Fetch latest scores
         run: node scripts/update-scores.mjs
 
       - name: Commit & push if anything changed
