@@ -116,6 +116,18 @@ async function main() {
   const { MATCHES, TEAMS } = loadData();
   const nameMap = buildNameMap(TEAMS);
 
+  // Early exit: skip ESPN entirely if no match is within a ±3h window of now.
+  // This makes runs outside active match periods instant no-ops.
+  const rightNow = Date.now();
+  const WINDOW = 3 * 3600 * 1000; // 3 hours either side of kickoff
+  const anyActive = MATCHES.some(
+    (m) => !Array.isArray(m.score) && Math.abs(new Date(m.t).getTime() - rightNow) < WINDOW
+  );
+  if (!anyActive) {
+    console.log("No matches within a 3-hour window right now — nothing to do.");
+    return;
+  }
+
   const outPath = join(ROOT, "scores.json");
   const existing = existsSync(outPath) ? JSON.parse(readFileSync(outPath, "utf8")) : {};
 
