@@ -459,10 +459,10 @@ function renderMarkers() {
     marker.on("popupopen", (e) => {
       const moreEl = e.popup.getElement()?.querySelector(".popup-more");
       if (!moreEl) return;
-      moreEl.addEventListener("click", () => {
+      moreEl.addEventListener("click", (ev) => {
+        ev.stopPropagation();
         e.popup.getElement().querySelectorAll(".popup-hidden").forEach((el) => el.classList.remove("popup-hidden"));
         moreEl.remove();
-        e.popup.update();
       });
     });
     marker.addTo(markerLayer);
