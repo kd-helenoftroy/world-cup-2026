@@ -87,7 +87,7 @@
   <!-- ============ PREDICTIONS ============ -->
   <section id="view-predictions" class="view">
     <h3 class="subhead">Who wins each group?</h3>
-    <p class="section-note">Each team's chances of topping their group, based on team strength and results so far — updated as the tournament unfolds. For fun, not betting advice.</p>
+    <p class="section-note">Each team's probability of topping their group, computed as a softmax over <em>(live Elo rating + 2 × current points)</em> — so results directly shift the bars. No external data: entirely derived from the same Elo model and live standings shown in the power rankings below.</p>
     <div id="groupwin-grid" class="groupwin-grid"></div>
 
     <h3 class="subhead">Live power rankings</h3>
