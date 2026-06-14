@@ -16,6 +16,9 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    concurrency:
+      group: score-sync
+      cancel-in-progress: false
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
