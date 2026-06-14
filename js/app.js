@@ -744,6 +744,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   renderSchedule();
 
+  // calendar toggle
+  const calToggle = $("#cal-toggle");
+  const calWrap = $("#calendar");
+  const CAL_KEY = "wc26-cal-collapsed";
+  if (localStorage.getItem(CAL_KEY) === "1") {
+    calWrap.classList.add("cal-collapsed");
+    calToggle.setAttribute("aria-expanded", "false");
+  }
+  calToggle.addEventListener("click", () => {
+    const collapsed = calWrap.classList.toggle("cal-collapsed");
+    calToggle.setAttribute("aria-expanded", String(!collapsed));
+    localStorage.setItem(CAL_KEY, collapsed ? "1" : "0");
+  });
+
   // map filters
   $("#map-team").innerHTML = TEAM_OPT("", "All teams");
   $("#map-city").innerHTML = `<option value="">All cities</option>` +

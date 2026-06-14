@@ -127,7 +127,21 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .pill.active.alt { background: var(--coral); border-color: var(--coral); }
 
 /* ---------- calendar ---------- */
-.calwrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; margin-bottom: 8px; }
+.cal-toggle-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 4px 0 8px; cursor: pointer;
+  font-family: "Anton", sans-serif; font-size: 13px; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.cal-toggle-btn:hover { color: var(--ink); }
+.cal-chevron { font-size: 18px; line-height: 1; transition: transform 0.25s ease; display: inline-block; }
+.cal-toggle-btn[aria-expanded="false"] .cal-chevron { transform: rotate(-90deg); }
+.calwrap {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px;
+  overflow: hidden; max-height: 1200px; margin-bottom: 8px;
+  transition: max-height 0.3s ease, margin-bottom 0.3s ease;
+}
+.calwrap.cal-collapsed { max-height: 0; margin-bottom: 0; }
 .calmonth {
   background: var(--paper);
   border: 2px solid var(--line);
