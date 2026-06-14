@@ -555,15 +555,13 @@ function renderPath() {
   html += pathStepHTML("The last match standing", KNOCKOUTS.find((k) => k.stage === "Final"), `${T.name} lift the trophy?`, true);
 
   $("#path-rail").innerHTML = html;
-  const impl = (oddsToImplied(T.odds) * 100).toFixed(1);
   const delta = RATINGS[code] - T.strength;
   const deltaTxt = Math.abs(delta) >= 0.05
-    ? ` Power index ${RATINGS[code].toFixed(1)} (<span class="${delta > 0 ? "delta-up" : "delta-down"}">${delta > 0 ? "▲" : "▼"}${Math.abs(delta).toFixed(1)}</span> so far).`
-    : "";
+    ? ` · Elo rating ${RATINGS[code].toFixed(1)} (<span class="${delta > 0 ? "delta-up" : "delta-down"}">${delta > 0 ? "▲" : "▼"}${Math.abs(delta).toFixed(1)}</span> vs. pre-tournament)`
+    : ` · Elo rating ${RATINGS[code].toFixed(1)}`;
   $("#path-summary").innerHTML =
     `<img src="${FLAG(T.flag, 40)}" alt="" style="width:24px;vertical-align:-4px;border-radius:3px"> ` +
-    `<b>${T.name}</b> — FIFA rank #${T.rank} · title odds <span class="mono" style="color:var(--coral)">${T.odds}</span> ` +
-    `(≈${impl}% implied).${deltaTxt} Three group games, then five knockout wins to the final at MetLife on July 19.`;
+    `<b>${T.name}</b> — FIFA rank #${T.rank}${deltaTxt}. Three group games, then five knockout wins to the final at MetLife on July 19.`;
 }
 
 /* =====================================================
