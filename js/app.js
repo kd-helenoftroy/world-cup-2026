@@ -634,21 +634,21 @@ function renderPredictions() {
   $("#odds-body").innerHTML = Object.entries(TEAMS)
     .sort((a, b) => RATINGS[b[0]] - RATINGS[a[0]])
     .map(([code, t], i) => {
-      const impl = oddsToImplied(t.odds) * 100;
       const delta = RATINGS[code] - t.strength;
       const deltaHTML = Math.abs(delta) < 0.05
         ? `<span class="delta-flat">—</span>`
         : delta > 0
           ? `<span class="delta-up">▲${delta.toFixed(1)}</span>`
           : `<span class="delta-down">▼${Math.abs(delta).toFixed(1)}</span>`;
+      const s = STANDINGS[code];
+      const gd = s.gf - s.ga;
       return `<tr>
         <td class="mono" style="color:var(--ink-soft)">${i + 1}</td>
         <td><img src="${FLAG(t.flag, 40)}" alt="" loading="lazy">${t.name}</td>
         <td class="mono">#${t.rank}</td>
         <td class="mono">${RATINGS[code].toFixed(1)} ${deltaHTML}</td>
-        <td class="odd">${t.odds}</td>
-        <td><div class="implbar"><i style="width:${Math.min(impl * 5.5, 100)}%"></i></div></td>
-        <td class="impl">${impl.toFixed(1)}%</td>
+        <td class="mono">${s.pts}</td>
+        <td class="mono" style="color:${gd > 0 ? "var(--pitch)" : gd < 0 ? "var(--coral)" : "inherit"}">${gd > 0 ? "+" : ""}${gd}</td>
       </tr>`;
     })
     .join("");
