@@ -148,8 +148,8 @@ const oddsToImplied = (american) => 100 / (parseInt(american.replace("+", ""), 1
    search on FOX Soccer's YouTube channel that lands on the official video. */
 const highlightsURL = (m) =>
   m.yt ||
-  `https://www.youtube.com/@FOXSoccer/search?query=${encodeURIComponent(
-    `${TEAMS[m.home].name} vs ${TEAMS[m.away].name} highlights World Cup`
+  `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    `FOX Soccer ${TEAMS[m.home].name} vs ${TEAMS[m.away].name} highlights World Cup 2026`
   )}`;
 
 /* ---------- ticket renderer ---------- */
