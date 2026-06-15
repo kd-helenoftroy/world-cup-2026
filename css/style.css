@@ -49,7 +49,7 @@ header { padding: 30px 20px 8px; max-width: 1140px; margin: 0 auto; }
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .wordmark { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .contact-wrap { position: relative; flex-shrink: 0; }
-.contact-btn { background: #0B2265; border: none; color: #fff; font-family: "Anton", sans-serif; font-size: 20px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px; border-radius: 10px; cursor: pointer; text-decoration: none; transition: background 0.15s; display: inline-block; }
+.contact-btn { background: #0B2265; border: none; color: #fff; font-family: "Archivo", sans-serif; font-weight: 800; font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 16px; border-radius: 10px; cursor: pointer; text-decoration: none; transition: background 0.15s; display: inline-block; }
 .contact-btn:hover { background: #0d2d84; }
 .wordmark h1 {
   font-family: "Anton", sans-serif;
