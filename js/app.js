@@ -217,7 +217,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     ? ` class="ticket done" href="${highlightsURL(m)}" target="_blank" rel="noopener" aria-label="Watch highlights of ${TEAMS[m.home].name} vs ${TEAMS[m.away].name}"`
     : ` class="ticket"`;
   return `
-    <${tag}${ytAttr} tabindex="0">
+    <${tag}${ytAttr} tabindex="0" data-matchid="${m.id}">
       <div class="stage-tag"><span class="badge ${stageClass}">${m.stage}</span>${statusChip}</div>
       <div class="teams">${teamsHTML}</div>
       <div class="kick">
@@ -755,18 +755,27 @@ async function _pollESPN(nameMap) {
           }
         } else {
           const clock = status.displayClock || null;
-          if (!match.liveScore || match.liveScore[0] !== pair[0] ||
-              match.liveScore[1] !== pair[1] || match.liveClock !== clock) {
-            match.liveScore = pair;
-            match.liveAsOf = new Date().toISOString();
-            match.liveClock = clock;
-            changed = true;
-          }
+          const scoreChanged = !match.liveScore || match.liveScore[0] !== pair[0] ||
+              match.liveScore[1] !== pair[1] || match.liveClock !== clock;
+          match.liveScore = pair;
+          match.liveAsOf = new Date().toISOString();
+          match.liveClock = clock;
+          if (scoreChanged) changed = true;
+          else _updateAsOf(match);
         }
       }
     } catch { /* network hiccup — try next tick */ }
   }
   return changed;
+}
+
+function _updateAsOf(match) {
+  const asOf = new Date(match.liveAsOf).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  document.querySelectorAll(".vtime.asof").forEach((el) => {
+    const card = el.closest("[data-matchid]");
+    if (card && card.dataset.matchid === String(match.id))
+      el.innerHTML = `score as of <b>${asOf}</b>`;
+  });
 }
 
 function startLivePoller() {
