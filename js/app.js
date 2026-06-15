@@ -144,6 +144,61 @@ function winProbs(homeCode, awayCode) {
 }
 const oddsToImplied = (american) => 100 / (parseInt(american.replace("+", ""), 10) + 100);
 
+/* =====================================================
+   MATCH RECAPS — ESPN article.story, best 2 sentences
+   ===================================================== */
+const RECAP_CACHE = new Map();
+
+const _FACT_WORDS = ['scored','goal','minute','red card','penalty','header','hat trick','var','saved','equaliz','opener','brace','dismissed','sent off','own goal','volley','free kick','corner','offside','stoppage'];
+const _SKIP_WORDS = ['sea of','chanting','fans','iconic','shadow of','playing in front','playing in the','sold-out'];
+
+function _pickBestTwo(storyHTML) {
+  const text = storyHTML.replace(/<[^>]+>/g, '');
+  const sentences = text
+    .split(/(?<=[.!?])\s+/)
+    .map(s => s.replace(/^[A-Z][A-Z,\s]+--\s*/, '').trim())
+    .filter(s => s.length > 30);
+  if (!sentences.length) return null;
+  const lede = sentences[0];
+  const rest = sentences.slice(1);
+  if (!rest.length) return lede;
+  const scoreS = (s) => {
+    const sl = s.toLowerCase();
+    if (_SKIP_WORDS.some(w => sl.includes(w))) return -1;
+    return _FACT_WORDS.filter(w => sl.includes(w)).length;
+  };
+  const best = rest.reduce((a, b) => scoreS(b) > scoreS(a) ? b : a, rest[0]);
+  return scoreS(best) >= 0 ? `${lede} ${best}` : lede;
+}
+
+async function _fetchRecap(espnId) {
+  if (RECAP_CACHE.has(espnId)) return RECAP_CACHE.get(espnId);
+  try {
+    const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${espnId}`);
+    if (!res.ok) { RECAP_CACHE.set(espnId, null); return null; }
+    const data = await res.json();
+    const recap = _pickBestTwo(data?.article?.story || '');
+    RECAP_CACHE.set(espnId, recap);
+    return recap;
+  } catch {
+    RECAP_CACHE.set(espnId, null);
+    return null;
+  }
+}
+
+function _injectRecaps() {
+  document.querySelectorAll('.match-recap[data-espnid]').forEach(el => {
+    const recap = RECAP_CACHE.get(Number(el.dataset.espnid));
+    if (recap) el.textContent = recap;
+  });
+}
+
+async function loadRecaps() {
+  const completed = [...MATCHES, ...KNOCKOUTS].filter(m => Array.isArray(m.score) && m.espnId);
+  await Promise.all(completed.map(m => _fetchRecap(m.espnId)));
+  _injectRecaps();
+}
+
 /* Highlights: exact URL if data.js provides m.yt, otherwise a targeted
    search on FOX Soccer's YouTube channel that lands on the official video. */
 const highlightsURL = (m) =>
@@ -211,6 +266,9 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   }
 
   const noteHTML = showNote ? `<div class="matchnote">${matchNote(m)}</div>` : "";
+  const recapHTML = (done && m.espnId)
+    ? `<div class="match-recap" data-espnid="${m.espnId}">${RECAP_CACHE.get(m.espnId) || ''}</div>`
+    : '';
   const stageClass = m.stage.startsWith("Group") ? "" : "ko";
   const tag = done ? "a" : "article";
   const ytAttr = done
@@ -227,6 +285,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
       </div>
       ${predHTML}
       ${noteHTML}
+      ${recapHTML}
       <div class="placefoot"><span class="ven">${v.name}</span><span>${v.city}</span>${done ? `<span class="hl">▶ Watch highlights</span>` : ""}</div>
     </${tag}>`;
 }
@@ -382,6 +441,7 @@ function renderSchedule() {
     out = `<div class="empty-day">No scheduled matches for this filter yet — knockout opponents aren't set until the group stage wraps on June 27. Check the <b>Path to the Trophy</b> tab for projected routes.</div>`;
   }
   $("#schedule-list").innerHTML = out || `<div class="empty-day">No matches in this window — click a highlighted day on the calendar, or hit ✕ Clear filters.</div>`;
+  _injectRecaps();
 
   $("#standings-area").innerHTML = schedF.groups.size
     ? [...schedF.groups].sort().map(standingsHTML).join("")
@@ -873,6 +933,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderSchedule();
   });
   renderSchedule();
+  loadRecaps();
 
   // calendar toggle
   const calToggle = $("#cal-toggle");
