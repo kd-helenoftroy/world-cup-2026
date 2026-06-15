@@ -318,7 +318,7 @@ function gamesForFilter() {
   } else if (schedF.quick === "past") {
     games = games.filter((m) => dayKey(m.t) < tk || Array.isArray(m.score));
   } else if (schedF.quick === "upcoming") {
-    games = games.filter((m) => !Array.isArray(m.score) && new Date(m.t) > now);
+    games = games.filter((m) => !Array.isArray(m.score) && dayKey(m.t) >= tk);
   }
   return games;
 }
