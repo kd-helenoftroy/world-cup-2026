@@ -89,7 +89,9 @@
       text-decoration: none;
     }
     .contact-value a:hover { text-decoration: underline; }
-    .bio { margin-bottom: 28px; font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; line-height: 1.8; }
+    .bio-row { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+    .bio { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; line-height: 1.8; flex: 1; }
+    .bio-photo { width: 120px; height: 160px; object-fit: cover; object-position: top; border-radius: 10px; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -97,7 +99,10 @@
     <a class="back-link" href="index.html">← Back to WC26</a>
     <h1>Kajal Dayal</h1>
     <div class="divider"></div>
-    <p class="bio">Full time sports &amp; fitness enthusiast, part time tech enthusiast based in San Francisco. Reach out &amp; follow along xx</p>
+    <div class="bio-row">
+      <p class="bio">Full time sports &amp; fitness enthusiast, part time tech enthusiast based in San Francisco. Reach out &amp; follow along xx</p>
+      <img class="bio-photo" src="kajal.jpg" alt="Kajal Dayal">
+    </div>
     <div class="contact-list">
       <div class="contact-row">
         <span class="contact-label">Email</span>
