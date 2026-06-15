@@ -92,7 +92,7 @@ const MATCHES = [
   { id: 5,  stage: "Group B", t: "2026-06-13T15:00:00-04:00", home: "QAT", away: "SUI", venue: "levis" },
   { id: 6,  stage: "Group C", t: "2026-06-13T18:00:00-04:00", home: "BRA", away: "MAR", venue: "metlife" },
   { id: 7,  stage: "Group C", t: "2026-06-13T21:00:00-04:00", home: "HAI", away: "SCO", venue: "gillette" },
-  { id: 8,  stage: "Group D", t: "2026-06-14T12:00:00-04:00", home: "AUS", away: "TUR", venue: "bcplace" },
+  { id: 8,  stage: "Group D", t: "2026-06-14T00:00:00-04:00", home: "AUS", away: "TUR", venue: "bcplace" },
   { id: 9,  stage: "Group E", t: "2026-06-14T13:00:00-04:00", home: "GER", away: "CUW", venue: "nrg" },
   { id: 10, stage: "Group F", t: "2026-06-14T16:00:00-04:00", home: "NED", away: "JPN", venue: "att" },
   { id: 11, stage: "Group E", t: "2026-06-14T19:00:00-04:00", home: "CIV", away: "ECU", venue: "lincoln" },
