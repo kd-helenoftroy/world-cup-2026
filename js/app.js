@@ -933,18 +933,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("#watch-search").addEventListener("input", (e) => renderWatch(e.target.value));
 
   startLivePoller();
-
-  const contactBtn = document.getElementById("contact-btn");
-  const contactCard = document.getElementById("contact-card");
-  contactBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const open = !contactCard.hidden;
-    contactCard.hidden = open;
-    contactBtn.setAttribute("aria-expanded", String(!open));
-  });
-  document.addEventListener("click", () => {
-    contactCard.hidden = true;
-    contactBtn.setAttribute("aria-expanded", "false");
-  });
-  contactCard.addEventListener("click", (e) => e.stopPropagation());
 });

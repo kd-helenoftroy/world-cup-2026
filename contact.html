@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — WC26</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+  <style>
+    :root {
+      --bg: #F6F3E8;
+      --ink: #000000;
+      --ink-link: #3a3a3a;
+      --navy: #0B2265;
+      --line: #E4DECB;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Archivo", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 48px 52px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(11, 34, 101, 0.10);
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 32px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .back-link:hover { text-decoration: underline; }
+    h1 {
+      font-family: "Anton", sans-serif;
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .divider {
+      height: 3px;
+      width: 48px;
+      background: var(--navy);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .contact-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .contact-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+    }
+    .contact-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .contact-value a {
+      color: var(--ink-link);
+      text-decoration: none;
+    }
+    .contact-value a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a class="back-link" href="index.html">← Back to WC26</a>
+    <h1>Kajal Dayal</h1>
+    <div class="divider"></div>
+    <div class="contact-list">
+      <div class="contact-row">
+        <span class="contact-label">Email</span>
+        <span class="contact-value"><a href="mailto:dayal.kajal@gmail.com">dayal.kajal@gmail.com</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Instagram</span>
+        <span class="contact-value"><a href="https://instagram.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">X</span>
+        <span class="contact-value"><a href="https://x.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">LinkedIn</span>
+        <span class="contact-value"><a href="https://www.linkedin.com/in/kajal-dayal" target="_blank" rel="noopener">Kajal Dayal</a></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
