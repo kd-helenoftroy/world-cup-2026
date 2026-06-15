@@ -370,6 +370,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
   cursor: pointer;
   background: linear-gradient(135deg, #FDF6E3, var(--pitch-soft));
   border-color: var(--pitch);
+  text-decoration: none;
+  color: var(--ink);
 }
 .ticket.done::before { border-left-color: rgba(22, 138, 78, 0.45); }
 .ticket.done .placefoot { border-top-color: rgba(22, 138, 78, 0.35); }

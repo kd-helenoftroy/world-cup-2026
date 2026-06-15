@@ -212,9 +212,12 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
 
   const noteHTML = showNote ? `<div class="matchnote">${matchNote(m)}</div>` : "";
   const stageClass = m.stage.startsWith("Group") ? "" : "ko";
-  const ytAttr = done ? ` class="ticket done" data-yt="${highlightsURL(m)}" role="link" aria-label="Watch highlights of ${TEAMS[m.home].name} vs ${TEAMS[m.away].name}"` : ` class="ticket"`;
+  const tag = done ? "a" : "article";
+  const ytAttr = done
+    ? ` class="ticket done" href="${highlightsURL(m)}" target="_blank" rel="noopener" aria-label="Watch highlights of ${TEAMS[m.home].name} vs ${TEAMS[m.away].name}"`
+    : ` class="ticket"`;
   return `
-    <article${ytAttr} tabindex="0">
+    <${tag}${ytAttr} tabindex="0">
       <div class="stage-tag"><span class="badge ${stageClass}">${m.stage}</span>${statusChip}</div>
       <div class="teams">${teamsHTML}</div>
       <div class="kick">
@@ -225,19 +228,9 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
       ${predHTML}
       ${noteHTML}
       <div class="placefoot"><span class="ven">${v.name}</span><span>${v.city}</span>${done ? `<span class="hl">▶ Watch highlights</span>` : ""}</div>
-    </article>`;
+    </${tag}>`;
 }
 
-/* whole completed ticket opens the FOX highlights video */
-document.addEventListener("click", (e) => {
-  const card = e.target.closest(".ticket.done[data-yt]");
-  if (card) window.open(card.dataset.yt, "_blank", "noopener");
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  const card = e.target.closest?.(".ticket.done[data-yt]");
-  if (card) window.open(card.dataset.yt, "_blank", "noopener");
-});
 
 /* =====================================================
    VIEW 1 — SCHEDULE
