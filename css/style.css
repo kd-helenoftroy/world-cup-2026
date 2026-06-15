@@ -348,9 +348,12 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .teamcard { border: 2px solid var(--line); border-radius: var(--radius); background: var(--paper); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
 .teamcard .tc-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .teamcard .tc-head img { width: 40px; height: 28px; object-fit: cover; border-radius: 5px; box-shadow: 0 1px 4px rgba(30,42,58,0.3); }
+.tc-head-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; }
 .tc-name { font-family: "Anton", sans-serif; font-size: 20px; text-transform: uppercase; letter-spacing: 0.02em; }
 .tc-meta { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-soft); }
 .tc-meta b { color: var(--coral); font-weight: 600; }
+.squad-link { font-size: 12px; font-weight: 700; color: var(--sky); text-decoration: none; white-space: nowrap; padding: 5px 10px; border: 1.5px solid var(--sky); border-radius: 20px; transition: background 0.15s; }
+.squad-link:hover { background: var(--sky); color: #fff; }
 .playergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-top: 14px; }
 .player { display: flex; gap: 11px; align-items: center; background: var(--bg); border-radius: 12px; padding: 9px 11px; }
 .avatar {

@@ -574,11 +574,17 @@ function teamCardHTML(code) {
       </div>`;
     })
     .join("");
+  const squadLink = t.squad
+    ? `<a class="squad-link" href="${t.squad}" target="_blank" rel="noopener">Full squad on FIFA.com →</a>`
+    : "";
   return `<div class="teamcard">
     <div class="tc-head">
       <img src="${FLAG(t.flag)}" alt="${t.name} flag">
-      <span class="tc-name">${t.name}</span>
-      <span class="tc-meta">Group ${t.group} · FIFA <b>#${t.rank}</b> · title odds <b>${t.odds}</b></span>
+      <div class="tc-head-text">
+        <span class="tc-name">${t.name}</span>
+        <span class="tc-meta">Group ${t.group} · FIFA <b>#${t.rank}</b> · title odds <b>${t.odds}</b></span>
+      </div>
+      ${squadLink}
     </div>
     <div class="playergrid">${players}</div>
   </div>`;
