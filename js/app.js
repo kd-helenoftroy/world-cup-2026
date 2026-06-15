@@ -662,6 +662,128 @@ function renderWatch(q = "") {
 }
 
 /* =====================================================
+   LIVE ESPN POLLER
+   Fetches the ESPN scoreboard directly from the browser
+   every 60 s while a match is active — no GitHub Actions
+   delay, no Vercel deploy wait, always real-time.
+   ===================================================== */
+const ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
+const POLL_MS = 60_000;
+const ACTIVE_WINDOW = 4 * 3600 * 1000;
+
+const _stripName = (s) =>
+  s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z]/g, "");
+
+const _ESPN_ALIASES = {
+  USA: ["usa","unitedstates","us"], KOR: ["southkorea","korearepublic","kor"],
+  CZE: ["czechia","czechrepublic"], TUR: ["turkiye","turkey"],
+  BIH: ["bosniaandherzegovina","bosniaherzegovina","bosnia"],
+  CIV: ["ivorycoast","cotedivoire"],
+  COD: ["drcongo","congodr","democraticrepublicofthecongo","drcongokinshasa"],
+  CPV: ["capeverde","caboverde"], CUW: ["curacao"],
+  IRN: ["iran","iriran","islamicrepublicofiran"],
+  NED: ["netherlands","holland"], RSA: ["southafrica"],
+  KSA: ["saudiarabia"], UZB: ["uzbekistan"], SCO: ["scotland"], ENG: ["england"],
+};
+
+function _buildNameMap() {
+  const map = {};
+  for (const [code, t] of Object.entries(TEAMS)) map[_stripName(t.name)] = code;
+  for (const [code, aliases] of Object.entries(_ESPN_ALIASES))
+    for (const a of aliases) map[a] = code;
+  return map;
+}
+
+function _activeDates() {
+  const now = Date.now();
+  const pending = MATCHES.filter(
+    (m) => !Array.isArray(m.score) && Math.abs(new Date(m.t).getTime() - now) < ACTIVE_WINDOW
+  );
+  if (!pending.length) return [];
+  const etFmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  });
+  const dates = new Set();
+  for (const m of pending) {
+    const d = new Date(m.t);
+    dates.add(d.toISOString().slice(0, 10).replace(/-/g, ""));
+    dates.add(etFmt.format(d).replace(/-/g, ""));
+  }
+  return [...dates];
+}
+
+async function _pollESPN(nameMap) {
+  const dates = _activeDates();
+  if (!dates.length) return false;
+  let changed = false;
+  for (const yyyymmdd of dates) {
+    try {
+      const res = await fetch(`${ESPN_SCOREBOARD}?dates=${yyyymmdd}`);
+      if (!res.ok) continue;
+      const { events = [] } = await res.json();
+      for (const ev of events) {
+        const comp = ev.competitions?.[0];
+        if (!comp) continue;
+        const status = comp.status ?? ev.status ?? {};
+        const finished = status.type?.completed === true;
+        const inProgress = !finished && status.type?.state === "in";
+        if (!finished && !inProgress) continue;
+        const sides = comp.competitors || [];
+        const home = sides.find((c) => c.homeAway === "home");
+        const away = sides.find((c) => c.homeAway === "away");
+        if (!home || !away) continue;
+        const codeOf = (c) =>
+          nameMap[_stripName(c.team?.displayName || "")] ??
+          nameMap[_stripName(c.team?.shortDisplayName || "")] ??
+          nameMap[_stripName(c.team?.name || "")];
+        const hCode = codeOf(home), aCode = codeOf(away);
+        if (!hCode || !aCode) continue;
+        const match = MATCHES.find(
+          (m) =>
+            ((m.home === hCode && m.away === aCode) || (m.home === aCode && m.away === hCode)) &&
+            Math.abs(new Date(m.t) - new Date(ev.date || comp.date)) < 36 * 3600 * 1000
+        );
+        if (!match) continue;
+        const hg = parseInt(home.score, 10), ag = parseInt(away.score, 10);
+        if (Number.isNaN(hg) || Number.isNaN(ag)) continue;
+        const pair = match.home === hCode ? [hg, ag] : [ag, hg];
+        if (finished) {
+          if (!Array.isArray(match.score)) {
+            match.score = pair;
+            delete match.liveScore; delete match.liveAsOf; delete match.liveClock;
+            changed = true;
+          }
+        } else {
+          const clock = status.displayClock || null;
+          if (!match.liveScore || match.liveScore[0] !== pair[0] ||
+              match.liveScore[1] !== pair[1] || match.liveClock !== clock) {
+            match.liveScore = pair;
+            match.liveAsOf = new Date().toISOString();
+            match.liveClock = clock;
+            changed = true;
+          }
+        }
+      }
+    } catch { /* network hiccup — try next tick */ }
+  }
+  return changed;
+}
+
+function startLivePoller() {
+  const nameMap = _buildNameMap();
+  async function tick() {
+    const changed = await _pollESPN(nameMap);
+    if (changed) {
+      refreshModel();
+      if ($("#view-schedule.active")) renderSchedule();
+      if ($("#view-predictions.active")) renderPredictions();
+    }
+    if (_activeDates().length) setTimeout(tick, POLL_MS);
+  }
+  if (_activeDates().length) tick();
+}
+
+/* =====================================================
    boot
    ===================================================== */
 /* Merge auto-synced results (written by the GitHub Action into scores.json)
@@ -794,4 +916,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPredictions();
   renderWatch();
   $("#watch-search").addEventListener("input", (e) => renderWatch(e.target.value));
+
+  startLivePoller();
 });
