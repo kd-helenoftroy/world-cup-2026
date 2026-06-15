@@ -89,9 +89,10 @@
       text-decoration: none;
     }
     .contact-value a:hover { text-decoration: underline; }
-    .bio-row { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
-    .bio { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; line-height: 1.8; flex: 1; }
-    .bio-photo { width: 120px; height: 160px; object-fit: cover; object-position: top; border-radius: 10px; flex-shrink: 0; }
+    .bio { margin-bottom: 28px; font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; line-height: 1.8; }
+    .bottom-row { display: flex; gap: 28px; align-items: flex-start; }
+    .contact-list { flex: 1; }
+    .bio-photo { width: 140px; height: 190px; object-fit: cover; object-position: top; border-radius: 10px; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -99,27 +100,27 @@
     <a class="back-link" href="index.html">← Back to WC26</a>
     <h1>Kajal Dayal</h1>
     <div class="divider"></div>
-    <div class="bio-row">
-      <p class="bio">Full time sports &amp; fitness enthusiast, part time tech enthusiast based in San Francisco. Reach out &amp; follow along xx</p>
+    <p class="bio">Full time sports &amp; fitness enthusiast, part time tech enthusiast based in San Francisco. Reach out &amp; follow along xx</p>
+    <div class="bottom-row">
+      <div class="contact-list">
+        <div class="contact-row">
+          <span class="contact-label">Email</span>
+          <span class="contact-value"><a href="mailto:dayal.kajal@gmail.com">dayal.kajal@gmail.com</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">Instagram</span>
+          <span class="contact-value"><a href="https://instagram.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">X</span>
+          <span class="contact-value"><a href="https://x.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
+        </div>
+        <div class="contact-row">
+          <span class="contact-label">LinkedIn</span>
+          <span class="contact-value"><a href="https://www.linkedin.com/in/kajal-dayal" target="_blank" rel="noopener">Kajal Dayal</a></span>
+        </div>
+      </div>
       <img class="bio-photo" src="kajal.jpg" alt="Kajal Dayal">
-    </div>
-    <div class="contact-list">
-      <div class="contact-row">
-        <span class="contact-label">Email</span>
-        <span class="contact-value"><a href="mailto:dayal.kajal@gmail.com">dayal.kajal@gmail.com</a></span>
-      </div>
-      <div class="contact-row">
-        <span class="contact-label">Instagram</span>
-        <span class="contact-value"><a href="https://instagram.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
-      </div>
-      <div class="contact-row">
-        <span class="contact-label">X</span>
-        <span class="contact-value"><a href="https://x.com/kajaldayal" target="_blank" rel="noopener">@kajaldayal</a></span>
-      </div>
-      <div class="contact-row">
-        <span class="contact-label">LinkedIn</span>
-        <span class="contact-value"><a href="https://www.linkedin.com/in/kajal-dayal" target="_blank" rel="noopener">Kajal Dayal</a></span>
-      </div>
     </div>
   </div>
 </body>
