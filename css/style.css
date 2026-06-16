@@ -428,6 +428,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .info-card { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
 .info-card h4 { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy, #0B2265); margin-bottom: 8px; }
+.info-card--wide { grid-column: 1 / -1; }
 .info-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
 .info-subhead { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--sky) !important; margin-top: 14px !important; margin-bottom: 4px !important; }
 
