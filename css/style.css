@@ -408,7 +408,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .funnel-5 { width: 68%; border-color: #2563EB; }
 .funnel-6 { width: 60%; border-color: var(--gold); background: var(--gold-soft); }
 .funnel-label { display: flex; flex-direction: column; gap: 3px; }
-.funnel-round { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+.funnel-round { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); display: flex; align-items: baseline; gap: 8px; }
+.funnel-date { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-soft); text-transform: none; }
 .funnel-detail { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
 .format-intro { white-space: nowrap; }
 .funnel-6 .funnel-round { color: #92400E; }
