@@ -397,6 +397,22 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .watchcard li::before { content: "▸"; position: absolute; left: 0; color: var(--pitch); }
 .watchcard li:first-child { color: var(--ink); font-weight: 600; }
 
+/* ---------- info grid (rules + format tabs) ---------- */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.info-card { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+.info-card h4 { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy, #0B2265); margin-bottom: 8px; }
+.info-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+
+/* ---------- friends tab ---------- */
+.friends-card { max-width: 520px; margin: 40px auto; background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: 40px 48px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 18px; text-align: center; }
+.friends-card p { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
+.friends-card p:first-child { font-family: "Anton", sans-serif; font-size: 20px; letter-spacing: 0.04em; color: var(--ink); text-transform: uppercase; }
+.friends-card a { color: var(--sky); font-weight: 700; text-decoration: none; }
+.friends-card a:hover { text-decoration: underline; }
+@media (max-width: 560px) {
+  .friends-card { padding: 28px 24px; }
+}
+
 /* ---------- teams / rosters ---------- */
 .groupnav { display: flex; gap: 6px; flex-wrap: wrap; }
 .teamcard { border: 2px solid var(--line); border-radius: var(--radius); background: var(--paper); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }

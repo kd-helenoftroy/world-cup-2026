@@ -932,6 +932,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (v === "path") renderPath();
       if (v === "teams") renderTeams();
       if (v === "predictions") renderPredictions();
+      // rules, format, friends are static — no render needed
     })
   );
 
