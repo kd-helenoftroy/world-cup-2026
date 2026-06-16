@@ -746,9 +746,10 @@ function renderPredictions() {
    ===================================================== */
 function renderWatch(q = "") {
   const needle = q.trim().toLowerCase();
+  if (!needle) { $("#watch-grid").innerHTML = ""; return; }
   const cards = Object.entries(TEAMS)
     .sort((a, b) => a[1].name.localeCompare(b[1].name))
-    .filter(([, t]) => !needle || t.name.toLowerCase().includes(needle))
+    .filter(([, t]) => t.name.toLowerCase().includes(needle))
     .map(([code, t]) => `<div class="watchcard">
         <div class="wc-head"><img src="${FLAG(t.flag, 40)}" alt="" loading="lazy"><span class="wc-name">${t.name}</span></div>
         <ul>${(BROADCASTERS[code] || ["Check local listings"]).map((c) => `<li>${c}</li>`).join("")}</ul>
@@ -933,7 +934,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (v === "path") renderPath();
       if (v === "teams") renderTeams();
       if (v === "predictions") renderPredictions();
-      // rules, format, friends are static — no render needed
+      if (v === "format") renderWatch(); // reset search on tab switch
+      // rules, friends are static — no render needed
     })
   );
 
