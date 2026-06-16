@@ -410,6 +410,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .funnel-label { display: flex; flex-direction: column; gap: 3px; }
 .funnel-round { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
 .funnel-detail { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
+.format-intro { white-space: nowrap; }
 .funnel-6 .funnel-round { color: #92400E; }
 .funnel-6 .funnel-detail { color: #B45309; }
 .funnel-teams { font-family: "Anton", sans-serif; font-size: 26px; color: var(--sky); letter-spacing: 0.02em; flex-shrink: 0; }
@@ -419,6 +420,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
   .funnel-round { font-size: 13px; }
   .funnel-detail { font-size: 10px; }
   .funnel-teams { font-size: 22px; }
+  .format-intro { white-space: normal; }
 }
 
 /* ---------- info grid (rules + format tabs) ---------- */
