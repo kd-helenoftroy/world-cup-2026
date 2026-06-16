@@ -260,12 +260,35 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .predbar .seg-a { background: var(--gold); }
 .predbar .lbl { display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
 
-.match-preview {
+.preview-toggle {
   grid-column: 1 / -1;
+}
+.preview-toggle summary {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sky);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+}
+.preview-toggle summary::before {
+  content: "▶";
+  font-size: 8px;
+  transition: transform 0.15s;
+}
+.preview-toggle[open] summary::before { transform: rotate(90deg); }
+.preview-toggle summary::-webkit-details-marker { display: none; }
+.match-preview {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 8px 0 2px;
+  gap: 7px;
+  padding: 10px 0 2px;
 }
 .preview-bullet {
   font-size: 12px;
