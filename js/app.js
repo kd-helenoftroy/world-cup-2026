@@ -291,7 +291,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     ? preview
       ? `<div class="matchnote">${matchNote(m)}</div>
         <details class="preview-toggle" data-matchid="${m.id}">
-          <summary>TL;DR going into the match</summary>
+          <summary>Your cheat sheet</summary>
           <div class="match-preview">${_renderPreview(preview)}</div>
         </details>`
       : `<div class="matchnote">${matchNote(m)}</div>`
