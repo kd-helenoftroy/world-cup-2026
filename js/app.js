@@ -289,7 +289,8 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   const preview = !done && !isKO && PREVIEW_CACHE.get(m.id);
   const noteHTML = showNote
     ? preview
-      ? `<details class="preview-toggle" data-matchid="${m.id}">
+      ? `<div class="matchnote">${matchNote(m)}</div>
+        <details class="preview-toggle" data-matchid="${m.id}">
           <summary>What to know going into the match</summary>
           <div class="match-preview">${_renderPreview(preview)}</div>
         </details>`
