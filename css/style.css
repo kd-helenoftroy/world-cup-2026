@@ -260,6 +260,23 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .predbar .seg-a { background: var(--gold); }
 .predbar .lbl { display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
 
+.match-preview {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0 2px;
+}
+.preview-bullet {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.preview-bullet strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .match-recap {
   grid-column: 1 / -1;
   font-size: 12px;

@@ -145,6 +145,27 @@ function winProbs(homeCode, awayCode) {
 const oddsToImplied = (american) => 100 / (parseInt(american.replace("+", ""), 10) + 100);
 
 /* =====================================================
+   MATCH PREVIEWS — AI-generated, loaded from previews.json
+   ===================================================== */
+const PREVIEW_CACHE = new Map();
+
+function _renderPreview(text) {
+  const bullets = text.split(/\n?-\s+(?=\*\*)/).filter(Boolean);
+  return bullets.map(b =>
+    `<div class="preview-bullet">${b.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`
+  ).join('');
+}
+
+async function loadPreviews() {
+  try {
+    const res = await fetch('previews.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    for (const [id, text] of Object.entries(data)) PREVIEW_CACHE.set(Number(id), text);
+  } catch { /* offline / local preview */ }
+}
+
+/* =====================================================
    MATCH RECAPS — ESPN article.story, best 2 sentences
    ===================================================== */
 const RECAP_CACHE = new Map();
@@ -265,7 +286,12 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
       </div>`;
   }
 
-  const noteHTML = showNote ? `<div class="matchnote">${matchNote(m)}</div>` : "";
+  const preview = !done && !isKO && PREVIEW_CACHE.get(m.id);
+  const noteHTML = showNote
+    ? preview
+      ? `<div class="match-preview">${_renderPreview(preview)}</div>`
+      : `<div class="matchnote">${matchNote(m)}</div>`
+    : "";
   const recapHTML = (done && m.espnId)
     ? `<div class="match-recap" data-espnid="${m.espnId}">${RECAP_CACHE.get(m.espnId) || ''}</div>`
     : '';
@@ -886,7 +912,7 @@ async function loadLiveScores() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadLiveScores();
+  await Promise.all([loadLiveScores(), loadPreviews()]);
   refreshModel();
 
   // tabs — each switch re-renders that view so the live model stays current
