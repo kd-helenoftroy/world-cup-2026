@@ -397,6 +397,30 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .watchcard li::before { content: "▸"; position: absolute; left: 0; color: var(--pitch); }
 .watchcard li:first-child { color: var(--ink); font-weight: 600; }
 
+/* ---------- tournament funnel ---------- */
+.tournament-funnel { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 24px auto; max-width: 640px; }
+.funnel-arrow { color: var(--line); font-size: 16px; line-height: 1; margin: 2px 0; }
+.funnel-stage { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 14px 20px; box-shadow: var(--shadow); width: 100%; transition: box-shadow 0.15s; }
+.funnel-1 { width: 100%; border-color: #CBD5E1; }
+.funnel-2 { width: 92%; border-color: #93C5FD; }
+.funnel-3 { width: 84%; border-color: #60A5FA; }
+.funnel-4 { width: 76%; border-color: #3B82F6; }
+.funnel-5 { width: 68%; border-color: #2563EB; }
+.funnel-6 { width: 60%; border-color: var(--gold); background: var(--gold-soft); }
+.funnel-label { display: flex; flex-direction: column; gap: 3px; }
+.funnel-round { font-family: "Anton", sans-serif; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+.funnel-detail { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
+.funnel-6 .funnel-round { color: #92400E; }
+.funnel-6 .funnel-detail { color: #B45309; }
+.funnel-teams { font-family: "Anton", sans-serif; font-size: 26px; color: var(--sky); letter-spacing: 0.02em; flex-shrink: 0; }
+.funnel-6 .funnel-teams { color: var(--gold); }
+@media (max-width: 560px) {
+  .funnel-2, .funnel-3, .funnel-4, .funnel-5, .funnel-6 { width: 100%; }
+  .funnel-round { font-size: 13px; }
+  .funnel-detail { font-size: 10px; }
+  .funnel-teams { font-size: 22px; }
+}
+
 /* ---------- info grid (rules + format tabs) ---------- */
 .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .info-card { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }

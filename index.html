@@ -54,7 +54,7 @@
       <span class="cal-toggle-label">Calendar</span>
       <span class="cal-chevron" aria-hidden="true">&#8964;</span>
     </button>
-    <div id="calendar" class="calwrap" aria-label="Tournament calendar — click a day"></div>
+    <div id="calendar" class="calwrap" aria-label="Tournament calendar: click a day"></div>
     <div class="filterbar">
       <span id="sched-quick">
         <button class="pill active" data-f="upcoming">Upcoming</button>
@@ -124,7 +124,7 @@
 
   <!-- ============ TEAMS ============ -->
   <section id="view-teams" class="view">
-    <p class="section-note">11 key players for every squad — age, position and club. Click "Full squad on FIFA.com" to see the complete 26-man roster.</p>
+    <p class="section-note">11 key players for every squad: age, position and club. Click "Full squad on FIFA.com" to see the complete 26-man roster.</p>
     <div class="filterbar">
       <label for="teams-team">Team</label>
       <select id="teams-team" class="ctl"></select>
@@ -169,7 +169,7 @@
 
   <!-- ============ SOCCER RULES ============ -->
   <section id="view-rules" class="view">
-    <p class="section-note">The essentials — everything you need to follow the game.</p>
+    <p class="section-note">The essentials: everything you need to follow the game.</p>
     <div class="info-grid">
       <div class="info-card">
         <h4>The Basics</h4>
@@ -180,19 +180,19 @@
         <p>A player is offside if they're ahead of the last defender when the ball is played to them. If the ball ricochets off a defender to an offside-positioned attacker, play stops. But if an opponent intercepts a pass intended for an offside player, play continues. You can't be offside from a throw-in, corner, or goal kick.</p>
       </div>
       <div class="info-card">
-        <h4>Penalty Kick, Corner Kick, Free Kick — What's the Difference?</h4>
-        <p><b>Penalty kick:</b> Awarded for a foul inside the 18-yard box. One player vs. the keeper from 12 yards — all other players stay outside until the kick is taken.</p>
+        <h4>Penalty Kick, Corner Kick, Free Kick: What's the Difference?</h4>
+        <p><b>Penalty kick:</b> Awarded for a foul inside the 18-yard box. One player vs. the keeper from 12 yards; all other players stay outside until the kick is taken.</p>
         <p style="margin-top:6px"><b>Free kick:</b> Awarded anywhere on the pitch for fouls or offsides. Defenders form a wall 10 yards away.</p>
         <p style="margin-top:6px"><b>Corner kick:</b> Awarded when a defender sends the ball out past their own goal line. Taken from the corner flag, roughly 20 yards from goal.</p>
         <p style="margin-top:6px"><b>Throw-in:</b> When the ball exits along the sideline, the opposing team restarts with a two-handed throw from behind the head.</p>
       </div>
       <div class="info-card">
         <h4>Yellow &amp; Red Cards</h4>
-        <p>A yellow card is a warning. Two yellows in the same match = automatic red and ejection. A straight red is for serious fouls or dangerous play — the team plays with 10 and cannot bring on a replacement. In this tournament, two yellow cards across group stage matches triggers a one-match suspension. Card counts reset after the group stage and again after the quarterfinals.</p>
+        <p>A yellow card is a warning. Two yellows in the same match = automatic red and ejection. A straight red is for serious fouls or dangerous play; the team plays with 10 and cannot bring on a replacement. In this tournament, two yellow cards across group stage matches triggers a one-match suspension. Card counts reset after the group stage and again after the quarterfinals.</p>
       </div>
       <div class="info-card">
         <h4>Handballs</h4>
-        <p>A handball is called when a player's hand — anywhere from fingertips to armpit — deliberately or unnaturally obstructs the ball or leads to a goal. FIFA's interpretation differs slightly from domestic leagues, which causes some confusion. A handball in the box = penalty. Outside the box = free kick.</p>
+        <p>A handball is called when a player's hand (fingertips to armpit) deliberately or unnaturally obstructs the ball or leads to a goal. FIFA's interpretation differs slightly from domestic leagues, which causes some confusion. A handball in the box = penalty. Outside the box = free kick.</p>
       </div>
       <div class="info-card">
         <h4>Extra Time &amp; Penalty Shootout</h4>
@@ -204,7 +204,7 @@
       </div>
       <div class="info-card">
         <h4>Substitutions</h4>
-        <p>Each team can make up to 5 substitutions per match (6 in extra time). Players who come off cannot return. The fourth official signals added time at the end of each half to account for stoppages, substitutions, and VAR delays — it can run long.</p>
+        <p>Each team can make up to 5 substitutions per match (6 in extra time). Players who come off cannot return. The fourth official signals added time at the end of each half to account for stoppages, substitutions, and VAR delays; it can run long.</p>
       </div>
       <div class="info-card">
         <h4>Water Breaks</h4>
@@ -220,42 +220,73 @@
       </div>
       <div class="info-card">
         <h4>The Goalkeeper</h4>
-        <p>The only player allowed to handle the ball — but only inside their own penalty area. They wear a different kit to stand out. During a penalty kick, the keeper can move freely along the goal line while the shooter runs up.</p>
+        <p>The only player allowed to handle the ball; only inside their own penalty area. They wear a different kit to stand out. During a penalty kick, the keeper can move freely along the goal line while the shooter runs up.</p>
       </div>
     </div>
   </section>
 
   <!-- ============ FIFA WC: HOW IT WORKS ============ -->
   <section id="view-format" class="view">
-    <p class="section-note">The 2026 World Cup is the biggest ever — 48 teams, 104 matches, three host countries. Here's how it all fits together.</p>
-    <div class="info-grid">
-      <div class="info-card">
-        <h4>48 Teams, 12 Groups</h4>
-        <p>The field is split into 12 groups of 4 teams (A through L). Every team plays the other three in their group once — 3 points for a win, 1 for a draw, 0 for a loss.</p>
+    <p class="section-note">The 2026 World Cup is the biggest ever: 48 teams, 104 matches, three host countries. Here's how it all fits together.</p>
+
+    <div class="tournament-funnel">
+      <div class="funnel-stage funnel-1">
+        <div class="funnel-label">
+          <span class="funnel-round">Group Stage</span>
+          <span class="funnel-detail">48 teams · 12 groups of 4 · 3 pts for a win</span>
+        </div>
+        <div class="funnel-teams">48</div>
       </div>
-      <div class="info-card">
-        <h4>Who Advances</h4>
-        <p>The top two teams from each group advance automatically (24 teams). The 8 best third-place finishers across all 12 groups also advance, giving 32 teams in the knockout round.</p>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-stage funnel-2">
+        <div class="funnel-label">
+          <span class="funnel-round">Round of 32</span>
+          <span class="funnel-detail">Top 2 per group + 8 best 3rd-place · single elim</span>
+        </div>
+        <div class="funnel-teams">32</div>
       </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-stage funnel-3">
+        <div class="funnel-label">
+          <span class="funnel-round">Round of 16</span>
+          <span class="funnel-detail">Win or go home · extra time &amp; penalties if level</span>
+        </div>
+        <div class="funnel-teams">16</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-stage funnel-4">
+        <div class="funnel-label">
+          <span class="funnel-round">Quarterfinals</span>
+          <span class="funnel-detail">Last 8 · two more wins to the final</span>
+        </div>
+        <div class="funnel-teams">8</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-stage funnel-5">
+        <div class="funnel-label">
+          <span class="funnel-round">Semifinals</span>
+          <span class="funnel-detail">Last 4 · losers meet in 3rd-place playoff (July 18, Miami)</span>
+        </div>
+        <div class="funnel-teams">4</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+      <div class="funnel-stage funnel-6">
+        <div class="funnel-label">
+          <span class="funnel-round">The Final</span>
+          <span class="funnel-detail">July 19 · MetLife Stadium, New Jersey · 82,500 capacity</span>
+        </div>
+        <div class="funnel-teams">2</div>
+      </div>
+    </div>
+
+    <div class="info-grid" style="margin-top:28px">
       <div class="info-card">
         <h4>Tiebreakers</h4>
-        <p>If teams finish level on points, FIFA works through 7 sequential factors: (1) goal difference, (2) goals scored, (3) head-to-head record, (4) head-to-head goal difference, (5) fair play record (fewest cards), (6) drawing of lots, (7) FIFA ranking. It rarely goes past goal difference — but when it does, it's drama.</p>
+        <p>If teams finish level on points, FIFA works through 7 sequential factors: (1) goal difference, (2) goals scored, (3) head-to-head record, (4) head-to-head goal difference, (5) fair play record (fewest cards), (6) drawing of lots, (7) FIFA ranking. It rarely goes past goal difference; but when it does, it's drama.</p>
       </div>
       <div class="info-card">
-        <h4>Round of 32</h4>
-        <p>The first knockout round. 32 teams, single elimination. Win or go home — no second chances. Group winners are seeded to face a runner-up or third-place team from a different group.</p>
-      </div>
-      <div class="info-card">
-        <h4>Round of 16 → Quarterfinals</h4>
-        <p>16 survivors play for a spot in the quarterfinals, then 8 teams fight for the final four. Every match from here is sudden death — tied after 90 minutes means extra time and potentially penalties.</p>
-      </div>
-      <div class="info-card">
-        <h4>Semifinals &amp; Third Place</h4>
-        <p>The four remaining teams play two semifinals. Losers meet in a third-place playoff (July 18, Miami). Winners advance to the final. Third place still matters — it's a World Cup bronze medal.</p>
-      </div>
-      <div class="info-card">
-        <h4>The Final</h4>
-        <p>July 19, 2026 at MetLife Stadium in New Jersey — capacity 82,500. The biggest single sporting event on the planet. 90 minutes, extra time if needed, then penalties if still level.</p>
+        <h4>Third-Place Playoff</h4>
+        <p>The two semifinal losers play for bronze on July 18 in Miami. Third place still matters; it's a World Cup bronze medal.</p>
       </div>
       <div class="info-card">
         <h4>Three Host Countries</h4>
@@ -280,8 +311,8 @@
 
 <footer>
   Schedule per the published FIFA World Cup 26 fixture list. Times convert automatically to your device's timezone (stadium-local time shown alongside).
-  Rankings, ages and odds are approximate. Win-probability bars, group predictions and the power index are statistical estimates, updated as results come in — not betting advice.
-  Map tiles © OpenStreetMap &amp; CARTO. Unofficial fan project — not affiliated with FIFA.
+  Rankings, ages and odds are approximate. Win-probability bars, group predictions and the power index are statistical estimates, updated as results come in; not betting advice.
+  Map tiles © OpenStreetMap &amp; CARTO. Unofficial fan project; not affiliated with FIFA.
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
