@@ -927,6 +927,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       tab.classList.add("active");
       $(`#view-${tab.dataset.view}`).classList.add("active");
       const v = tab.dataset.view;
+      document.querySelector("footer").classList.toggle("hidden", v === "friends");
       if (v === "schedule") renderSchedule();
       if (v === "map") setTimeout(() => { buildMap(); map.invalidateSize(); renderMarkers(); }, 60);
       if (v === "path") renderPath();

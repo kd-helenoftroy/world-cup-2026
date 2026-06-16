@@ -519,6 +519,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .standings tr.maybe td { background: var(--gold-soft); }
 .standnote { font-size: 11.5px; color: var(--ink-soft); margin-top: 7px; }
 
+footer.hidden { display: none; }
 footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
 
 @media (max-width: 560px) {
