@@ -46,12 +46,10 @@ while ((rb = rosterBlockRe.exec(dataJs)) !== null) {
 }
 
 /* ---- load existing state ---- */
-const scores   = existsSync('./scores.json')   ? JSON.parse(readFileSync('./scores.json',   'utf8')) : {};
 const previews = existsSync('./previews.json') ? JSON.parse(readFileSync('./previews.json', 'utf8')) : {};
 
 const now = Date.now();
 const upcoming = matches.filter(m =>
-  !scores[m.id] &&
   new Date(m.t).getTime() > now - 3_600_000
 );
 

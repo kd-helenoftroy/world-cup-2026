@@ -1,72 +1,20 @@
-name: Update scores
+name: Refresh match previews
 
 on:
   schedule:
-    # Every 5 minutes between 3 PM and 3 AM UTC (covers all WC2026 kickoffs + finishes)
-    - cron: "*/5 15-23 * * *"   # 3 PM – 11:55 PM UTC
-    - cron: "*/5 0-3  * * *"    # midnight – 3:55 AM UTC
+    # Run once daily at 6 AM UTC to keep upcoming match previews fresh
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  sync:
-    runs-on: ubuntu-latest
-    concurrency:
-      group: score-sync
-      cancel-in-progress: false
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Sync to latest origin and fetch scores
-        run: |
-          git fetch origin
-          git reset --hard origin/main
-          node scripts/update-scores.mjs
-
-      - name: Commit & push if anything changed
-        id: push
-        run: |
-          set -e
-          git config user.name "wc26-score-bot"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add scores.json
-          if git diff --cached --quiet; then
-            echo "No new scores this run."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            git commit -m "Update World Cup scores"
-            git push
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Trigger Vercel redeploy
-        if: steps.push.outputs.changed == 'true'
-        env:
-          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
-        run: |
-          if [ -n "$HOOK" ]; then
-            curl -s -X POST "$HOOK"
-          else
-            echo "VERCEL_DEPLOY_HOOK secret not set, skipping."
-          fi
-
   previews:
     runs-on: ubuntu-latest
-    needs: sync
-    if: needs.sync.outputs.changed == 'true'
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -87,6 +35,6 @@ jobs:
             echo "No new previews."
           else
             git pull --no-rebase
-            git commit -m "Update match previews"
+            git commit -m "Refresh match previews"
             git push
           fi

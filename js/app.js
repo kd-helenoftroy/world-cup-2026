@@ -809,6 +809,54 @@ function _activeDates() {
   return [...dates];
 }
 
+function _applyESPNEvents(events, nameMap) {
+  let changed = false;
+  for (const ev of events) {
+    const comp = ev.competitions?.[0];
+    if (!comp) continue;
+    const status = comp.status ?? ev.status ?? {};
+    const finished = status.type?.completed === true;
+    const inProgress = !finished && status.type?.state === "in";
+    if (!finished && !inProgress) continue;
+    const sides = comp.competitors || [];
+    const home = sides.find((c) => c.homeAway === "home");
+    const away = sides.find((c) => c.homeAway === "away");
+    if (!home || !away) continue;
+    const codeOf = (c) =>
+      nameMap[_stripName(c.team?.displayName || "")] ??
+      nameMap[_stripName(c.team?.shortDisplayName || "")] ??
+      nameMap[_stripName(c.team?.name || "")];
+    const hCode = codeOf(home), aCode = codeOf(away);
+    if (!hCode || !aCode) continue;
+    const match = MATCHES.find(
+      (m) =>
+        ((m.home === hCode && m.away === aCode) || (m.home === aCode && m.away === hCode)) &&
+        Math.abs(new Date(m.t) - new Date(ev.date || comp.date)) < 36 * 3600 * 1000
+    );
+    if (!match) continue;
+    const hg = parseInt(home.score, 10), ag = parseInt(away.score, 10);
+    if (Number.isNaN(hg) || Number.isNaN(ag)) continue;
+    const pair = match.home === hCode ? [hg, ag] : [ag, hg];
+    if (finished) {
+      if (!Array.isArray(match.score)) {
+        match.score = pair;
+        delete match.liveScore; delete match.liveAsOf; delete match.liveClock;
+        changed = true;
+      }
+    } else {
+      const clock = status.displayClock || null;
+      const scoreChanged = !match.liveScore || match.liveScore[0] !== pair[0] ||
+          match.liveScore[1] !== pair[1] || match.liveClock !== clock;
+      match.liveScore = pair;
+      match.liveAsOf = new Date().toISOString();
+      match.liveClock = clock;
+      if (scoreChanged) changed = true;
+      else _updateAsOf(match);
+    }
+  }
+  return changed;
+}
+
 async function _pollESPN(nameMap) {
   const dates = _activeDates();
   if (!dates.length) return false;
@@ -818,49 +866,7 @@ async function _pollESPN(nameMap) {
       const res = await fetch(`${ESPN_SCOREBOARD}?dates=${yyyymmdd}`);
       if (!res.ok) continue;
       const { events = [] } = await res.json();
-      for (const ev of events) {
-        const comp = ev.competitions?.[0];
-        if (!comp) continue;
-        const status = comp.status ?? ev.status ?? {};
-        const finished = status.type?.completed === true;
-        const inProgress = !finished && status.type?.state === "in";
-        if (!finished && !inProgress) continue;
-        const sides = comp.competitors || [];
-        const home = sides.find((c) => c.homeAway === "home");
-        const away = sides.find((c) => c.homeAway === "away");
-        if (!home || !away) continue;
-        const codeOf = (c) =>
-          nameMap[_stripName(c.team?.displayName || "")] ??
-          nameMap[_stripName(c.team?.shortDisplayName || "")] ??
-          nameMap[_stripName(c.team?.name || "")];
-        const hCode = codeOf(home), aCode = codeOf(away);
-        if (!hCode || !aCode) continue;
-        const match = MATCHES.find(
-          (m) =>
-            ((m.home === hCode && m.away === aCode) || (m.home === aCode && m.away === hCode)) &&
-            Math.abs(new Date(m.t) - new Date(ev.date || comp.date)) < 36 * 3600 * 1000
-        );
-        if (!match) continue;
-        const hg = parseInt(home.score, 10), ag = parseInt(away.score, 10);
-        if (Number.isNaN(hg) || Number.isNaN(ag)) continue;
-        const pair = match.home === hCode ? [hg, ag] : [ag, hg];
-        if (finished) {
-          if (!Array.isArray(match.score)) {
-            match.score = pair;
-            delete match.liveScore; delete match.liveAsOf; delete match.liveClock;
-            changed = true;
-          }
-        } else {
-          const clock = status.displayClock || null;
-          const scoreChanged = !match.liveScore || match.liveScore[0] !== pair[0] ||
-              match.liveScore[1] !== pair[1] || match.liveClock !== clock;
-          match.liveScore = pair;
-          match.liveAsOf = new Date().toISOString();
-          match.liveClock = clock;
-          if (scoreChanged) changed = true;
-          else _updateAsOf(match);
-        }
-      }
+      if (_applyESPNEvents(events, nameMap)) changed = true;
     } catch { /* network hiccup — try next tick */ }
   }
   return changed;
@@ -892,28 +898,31 @@ function startLivePoller() {
 /* =====================================================
    boot
    ===================================================== */
-/* Merge auto-synced results (written by the GitHub Action into scores.json)
-   over the matches before anything renders. Fails silently if the file
-   doesn't exist yet — the site then runs purely off data.js. */
+/* Fetch all scores directly from ESPN on page load — no GitHub Action,
+   no scores.json, no lag. Fetches all past match dates in parallel. */
 async function loadLiveScores() {
-  try {
-    const res = await fetch("scores.json", { cache: "no-store" });
-    if (!res.ok) return;
-    const scores = await res.json();
-    for (const [id, s] of Object.entries(scores)) {
-      const m = MATCHES.find((x) => x.id === Number(id));
-      if (!m) continue;
-      if (Array.isArray(s) && s.length === 2) {
-        m.score = s; // final
-      } else if (s && s.live && Array.isArray(s.score)) {
-        m.liveScore = s.score; // in-progress snapshot — shown on the ticket,
-        m.liveAsOf = s.asOf;   // but never fed into standings/ratings
-        m.liveClock = s.clock;
-      }
-    }
-  } catch {
-    /* offline / local preview — no problem */
+  const nameMap = _buildNameMap();
+  const now = Date.now();
+  const etFmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  });
+  const dates = new Set();
+  for (const m of MATCHES) {
+    if (Array.isArray(m.score)) continue; // already hardcoded in data.js
+    const kickoff = new Date(m.t).getTime();
+    if (kickoff > now + ACTIVE_WINDOW) continue; // future match
+    const d = new Date(m.t);
+    dates.add(d.toISOString().slice(0, 10).replace(/-/g, ""));
+    dates.add(etFmt.format(d).replace(/-/g, ""));
   }
+  await Promise.all([...dates].map(async (yyyymmdd) => {
+    try {
+      const res = await fetch(`${ESPN_SCOREBOARD}?dates=${yyyymmdd}`);
+      if (!res.ok) return;
+      const { events = [] } = await res.json();
+      _applyESPNEvents(events, nameMap);
+    } catch { /* offline / network hiccup */ }
+  }));
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
