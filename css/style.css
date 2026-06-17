@@ -301,7 +301,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .matchnote {
   grid-column: 1 / -1;
   font-size: 12.5px;
-  color: var(--ink-soft);
+  color: rgba(2, 15, 42, 0.72);
   background: var(--sky-soft);
   border-radius: 9px;
   padding: 8px 11px;
@@ -327,16 +327,16 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .preview-toggle[open] summary::before { transform: rotate(90deg); }
 .preview-toggle summary::-webkit-details-marker { display: none; }
 .match-preview { display: flex; flex-direction: column; gap: 7px; padding: 10px 0 2px; }
-.preview-bullet { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.preview-bullet { font-size: 12px; color: rgba(2, 15, 42, 0.72); line-height: 1.5; }
 .preview-bullet strong { color: var(--ink); font-weight: 700; }
 
 .match-recap {
   grid-column: 1 / -1;
-  font-size: 12px; color: var(--ink-soft); line-height: 1.55;
+  font-size: 12px; color: rgba(2, 15, 42, 0.72); line-height: 1.55;
   padding: 6px 0 2px; min-height: 0;
 }
 .match-recap:empty { display: none; }
-.recap-point { display: block; color: var(--ink-soft); padding-left: 0.6em; text-indent: -0.6em; }
+.recap-point { display: block; color: rgba(2, 15, 42, 0.72); padding-left: 0.6em; text-indent: -0.6em; }
 
 .ticket .placefoot {
   grid-column: 1 / -1;
