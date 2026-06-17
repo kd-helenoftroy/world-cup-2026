@@ -6,20 +6,23 @@
   <title>Contact: WC26</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
   <style>
     :root {
-      --bg: #F6F3E8;
-      --ink: #000000;
-      --ink-link: #3a3a3a;
-      --navy: #0B2265;
-      --line: #E4DECB;
+      --bg: #F0F4FA;
+      --ink: #020F2A;
+      --ink-soft: rgba(2, 15, 42, 0.72);
+      --pitch: #0A84FF;
+      --coral: #F43056;
+      --line: rgba(2, 15, 42, 0.09);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: "Archivo", system-ui, sans-serif;
-      background: var(--bg);
+      font-family: "Barlow", system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 90% 35% at 50% -4%, rgba(10, 132, 255, 0.07), transparent 55%),
+        var(--bg);
       color: var(--ink);
       min-height: 100vh;
       display: flex;
@@ -30,25 +33,26 @@
     }
     .card {
       background: #fff;
-      border-radius: 20px;
-      padding: 48px 52px;
-      max-width: 480px;
+      border-radius: 12px;
+      padding: 36px 40px;
+      max-width: 420px;
       width: 100%;
-      box-shadow: 0 8px 32px rgba(11, 34, 101, 0.10);
+      box-shadow: 0 2px 12px rgba(2, 15, 42, 0.08);
+      border: 1.5px solid var(--line);
     }
     .back-link {
       display: inline-block;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       font-size: 13px;
       font-weight: 700;
-      color: var(--navy);
+      color: var(--pitch);
       text-decoration: none;
       letter-spacing: 0.04em;
     }
     .back-link:hover { text-decoration: underline; }
     h1 {
       font-family: "Anton", sans-serif;
-      font-size: 36px;
+      font-size: 28px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink);
@@ -56,15 +60,15 @@
     }
     .divider {
       height: 3px;
-      width: 48px;
-      background: var(--navy);
+      width: 40px;
+      background: linear-gradient(to right, var(--pitch), var(--coral));
       border-radius: 2px;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .contact-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
     .contact-row {
       display: flex;
@@ -73,33 +77,33 @@
     }
     .contact-label {
       font-family: "IBM Plex Mono", monospace;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #888;
+      color: var(--ink-soft);
     }
     .contact-value {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--ink);
     }
     .contact-value a {
-      color: var(--ink-link);
+      color: var(--ink);
       text-decoration: none;
     }
-    .contact-value a:hover { text-decoration: underline; }
-    .bio { margin-bottom: 28px; font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; line-height: 1.8; }
-    .bottom-row { display: flex; gap: 28px; align-items: flex-start; }
+    .contact-value a:hover { color: var(--pitch); text-decoration: underline; }
+    .bio { margin-bottom: 24px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); line-height: 1.8; }
+    .bottom-row { display: flex; gap: 24px; align-items: flex-start; }
     .contact-list { flex: 1; }
-    .bio-photo { width: 140px; height: 240px; object-fit: cover; object-position: top; border-radius: 10px; flex-shrink: 0; }
+    .bio-photo { width: 110px; height: 185px; object-fit: cover; object-position: top; border-radius: 8px; flex-shrink: 0; }
     @media (max-width: 480px) {
       .card { padding: 24px 18px; }
-      .bottom-row { gap: 16px; }
+      .bottom-row { gap: 14px; }
       .contact-list { gap: 12px; }
       .contact-label { font-size: 10px; }
       .contact-value { font-size: 13px; }
-      .bio-photo { width: 110px; height: 190px; }
+      .bio-photo { width: 90px; height: 155px; }
     }
   </style>
 </head>
