@@ -530,15 +530,23 @@ function downloadCalendar() {
   }
 
   lines.push('END:VCALENDAR');
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'world-cup-2026.ics';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const icsContent = lines.join('\r\n');
+
+  // iOS Safari ignores the download attribute and won't prompt for calendar
+  // import via blob URL — navigating to a data URI triggers the prompt instead
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+  } else {
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'world-cup-2026.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }
 
 /* group standings table — shown when filtering by group(s) */
