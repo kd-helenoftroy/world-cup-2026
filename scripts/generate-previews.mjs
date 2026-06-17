@@ -8,7 +8,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 const API_KEY = process.env.ANTHROPIC_API_KEY;
-if (!API_KEY) { console.error('ANTHROPIC_API_KEY not set'); process.exit(1); }
+if (!API_KEY) { console.warn('ANTHROPIC_API_KEY not set — skipping preview generation.'); process.exit(0); }
 
 const FORCE = process.argv.includes('--force');
 const REFRESH_WINDOW_MS = 72 * 3600 * 1000; // always regenerate previews for matches within 72h
