@@ -98,13 +98,14 @@
     .contact-list { flex: 1; gap: 10px; }
     .contact-label { font-size: 9px; }
     .contact-value { font-size: 12px; }
-    .bio-photo { width: 110px; height: 100%; object-fit: cover; object-position: top; border-radius: 8px; flex-shrink: 0; }
+    .photo-wrap { width: 110px; flex-shrink: 0; }
+    .bio-photo { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 8px; display: block; }
     @media (max-width: 480px) {
       .card { padding: 24px 18px; }
       .bottom-row { gap: 14px; }
       .contact-label { font-size: 9px; }
       .contact-value { font-size: 12px; }
-      .bio-photo { width: 90px; }
+      .photo-wrap { width: 90px; }
     }
   </style>
 </head>
@@ -137,7 +138,7 @@
           <span class="contact-value"><a href="https://github.com/kd-helenoftroy/world-cup-2026" target="_blank" rel="noopener">GitHub</a></span>
         </div>
       </div>
-      <img class="bio-photo" src="kajal.jpg" alt="Kajal Dayal">
+      <div class="photo-wrap"><img class="bio-photo" src="kajal.jpg" alt="Kajal Dayal"></div>
     </div>
   </div>
 <script defer src="/_vercel/insights/script.js"></script>
