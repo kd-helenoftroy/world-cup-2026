@@ -532,11 +532,21 @@ function downloadCalendar() {
   lines.push('END:VCALENDAR');
   const icsContent = lines.join('\r\n');
 
-  // iOS Safari ignores the download attribute — navigate directly to a File
-  // object URL so iOS recognises the MIME type and preserves the filename
+  // iOS Safari can't get a filename from blob/data URIs — POST to a serverless
+  // function that echoes the ICS back with Content-Disposition: attachment so
+  // iOS receives a real HTTP response with the correct filename
   if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    const file = new File([icsContent], 'world-cup-2026.ics', { type: 'text/calendar;charset=utf-8' });
-    window.location.href = URL.createObjectURL(file);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/api/calendar';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'ics';
+    input.value = icsContent;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
   } else {
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
