@@ -80,12 +80,17 @@ async function generateRecap(match, article) {
   const [hg, ag] = match.score;
   const result = hg > ag ? `${home} won ${hg}–${ag}` : hg < ag ? `${away} won ${ag}–${hg}` : `${home} and ${away} drew ${hg}–${ag}`;
 
-  const prompt = `You write funny, casual match recaps for people who want to sound smart about soccer at the office.
+  const prompt = `You write casual match recaps as short talking points — the kind of thing you'd skim before chatting about the game with a friend.
 
 Match: ${home} vs ${away} (${result})
 ${article ? `Article:\n${article.slice(0, 1200)}` : '(no article available)'}
 
-Write exactly 2 sentences — no more. The tone should be like a funny friend giving you a quick debrief so you can drop it into a work conversation without looking clueless. Be specific about what actually happened (goals, key moments, drama). No generic hype. No opener like "In an exciting match..." Just get straight to the good stuff.`;
+Output exactly 3 bullet points using this format (a dash then a space, then the point):
+- [talking point]
+- [talking point]
+- [talking point]
+
+Each point should be one short casual sentence. Cover: who scored or what the key moment was, something interesting or dramatic that happened, and one takeaway about what it means or how it felt. No fluff, no "both teams played hard." Casual tone — like you're texting a friend.`;
 
   return callClaude(prompt);
 }

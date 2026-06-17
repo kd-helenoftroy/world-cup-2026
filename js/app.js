@@ -217,10 +217,16 @@ async function _fetchRecap(espnId) {
   }
 }
 
+function _renderRecap(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('-'));
+  if (!lines.length) return `<span>${text}</span>`;
+  return lines.map(l => `<span class="recap-point">${l.replace(/^-\s*/, '')}</span>`).join('');
+}
+
 function _injectRecaps() {
   document.querySelectorAll('.match-recap[data-espnid]').forEach(el => {
     const recap = RECAP_CACHE.get(Number(el.dataset.espnid));
-    if (recap) el.textContent = recap;
+    if (recap) el.innerHTML = _renderRecap(recap);
   });
 }
 
