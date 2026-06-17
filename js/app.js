@@ -477,6 +477,70 @@ function gamesForFilter() {
   return games;
 }
 
+/* =====================================================
+   CALENDAR EXPORT — generates .ics for current filter
+   ===================================================== */
+function _icsDate(date) {
+  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+function _icsEscape(s) {
+  return String(s).replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
+}
+
+function _icsFold(line) {
+  if (line.length <= 75) return line;
+  let out = line.slice(0, 75);
+  let i = 75;
+  while (i < line.length) { out += '\r\n ' + line.slice(i, i + 74); i += 74; }
+  return out;
+}
+
+function downloadCalendar() {
+  const matches = gamesForFilter().filter(m => !Array.isArray(m.score) && !m.liveScore);
+  if (!matches.length) { alert('No upcoming matches match your current filters.'); return; }
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//fifa26wc.com//World Cup 2026//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:World Cup 2026',
+  ];
+
+  for (const m of matches) {
+    const start = new Date(m.t);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+    const v = VENUES[m.venue];
+    const home = TEAMS[m.home]?.name || '?';
+    const away = TEAMS[m.away]?.name || '?';
+    const location = v ? `${v.name}, ${v.city}` : '';
+    const desc = _icsEscape(`${m.stage}${location ? ' · ' + location : ''}\nfifa26wc.com · by: Kajal Dayal`);
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:wc26-match-${m.id}@fifa26wc.com`,
+      `DTSTART:${_icsDate(start)}`,
+      `DTEND:${_icsDate(end)}`,
+      _icsFold(`SUMMARY:${_icsEscape(`${home} vs ${away} · World Cup 2026`)}`),
+      _icsFold(`DESCRIPTION:${desc}`),
+      _icsFold(`LOCATION:${_icsEscape(location)}`),
+      'END:VEVENT',
+    );
+  }
+
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'world-cup-2026.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 /* group standings table — shown when filtering by group(s) */
 function standingsHTML(group) {
   const rows = Object.entries(TEAMS)
@@ -1040,6 +1104,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     schedF = { quick: "upcoming", day: null, teams: new Set(), groups: new Set(), stage: "all" };
     renderSchedule();
   });
+  // calendar export
+  $("#cal-export").addEventListener("click", downloadCalendar);
   renderSchedule();
   loadRecaps();
 

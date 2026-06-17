@@ -568,6 +568,15 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .clearbtn:hover { transform: translateY(-1px); }
 .clearbtn:focus-visible { outline: 2px solid var(--sky); }
 .clearbtn[disabled] { opacity: 0.4; cursor: default; transform: none; }
+.cal-export-btn {
+  margin-left: auto;
+  background: none; border: 2px solid var(--line); color: var(--ink-soft);
+  border-radius: 999px; padding: 5px 14px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, transform 0.12s;
+}
+.cal-export-btn:hover { border-color: var(--pitch); color: var(--pitch); transform: translateY(-1px); }
+.cal-export-btn:focus-visible { outline: 2px solid var(--sky); }
 
 /* numbered venue markers (team filter on map) */
 .vnum-marker span {
