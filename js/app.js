@@ -530,34 +530,15 @@ function downloadCalendar() {
   }
 
   lines.push('END:VCALENDAR');
-  const icsContent = lines.join('\r\n');
-
-  // iOS Safari can't get a filename from blob/data URIs — POST to a serverless
-  // function that echoes the ICS back with Content-Disposition: attachment so
-  // iOS receives a real HTTP response with the correct filename
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/api/calendar';
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'ics';
-    input.value = icsContent;
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-  } else {
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'world-cup-2026.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'world-cup-2026.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 /* group standings table — shown when filtering by group(s) */
