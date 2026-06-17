@@ -228,6 +228,12 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
     transition: none !important;
     margin-bottom: 0 !important;
   }
+  .sched-left .calmonth { padding: 10px 10px 8px; }
+  .sched-left .calmonth h4 { font-size: 13px; margin-bottom: 8px; }
+  .sched-left .calgrid { gap: 2px; }
+  .sched-left .calgrid .dowh { font-size: 9px; }
+  .sched-left .calday { font-size: 11px; border-radius: 7px; }
+  .sched-left .calday .dots { font-size: 6px; letter-spacing: 0.5px; }
 }
 
 .dayheader {
