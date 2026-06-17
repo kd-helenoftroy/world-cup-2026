@@ -179,6 +179,31 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .calday.selected { background: var(--pitch); color: #fff; }
 .calday.selected .dots { color: var(--gold); }
 
+/* ---------- calendar hover tooltip ---------- */
+.cal-tooltip {
+  position: fixed; z-index: 9999;
+  background: var(--paper); border: 2px solid var(--line);
+  border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  padding: 10px 14px; min-width: 210px; max-width: 300px;
+  pointer-events: none; opacity: 0; transition: opacity 0.1s;
+  font-family: "Archivo", sans-serif;
+}
+.cal-tooltip.visible { opacity: 1; }
+.cal-tip-date {
+  font-family: "Anton", sans-serif; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--ink); margin-bottom: 6px;
+}
+.cal-tip-match {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 5px 0; border-top: 1px dashed var(--line);
+}
+.cal-tip-teams { font-size: 12px; font-weight: 600; color: var(--ink); }
+.cal-tip-vs { color: var(--ink-soft); font-weight: 400; }
+.cal-tip-flag { width: 14px; vertical-align: -1px; border-radius: 2px; }
+.cal-tip-score { font-family: "IBM Plex Mono", monospace; color: var(--pitch); font-size: 11px; margin-right: 2px; }
+.cal-tip-meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); }
+
 .dayheader {
   font-family: "Anton", sans-serif; font-size: 20px; text-transform: uppercase;
   letter-spacing: 0.03em; margin: 26px 0 12px;

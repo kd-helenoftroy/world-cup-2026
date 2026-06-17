@@ -375,6 +375,55 @@ function buildCalendar() {
       renderSchedule();
     })
   );
+
+  // hover tooltip
+  let calTip = document.getElementById("cal-tooltip");
+  if (!calTip) {
+    calTip = document.createElement("div");
+    calTip.id = "cal-tooltip";
+    calTip.className = "cal-tooltip";
+    document.body.appendChild(calTip);
+  }
+
+  $$("#calendar .calday.hasgames").forEach((b) => {
+    b.addEventListener("mouseenter", () => {
+      if (window.matchMedia("(hover: none)").matches) return;
+      const k = b.dataset.day;
+      const games = byDay[k] || [];
+      const dateLabel = new Date(k + "T12:00:00").toLocaleDateString([], { month: "long", day: "numeric" });
+      calTip.innerHTML = `<div class="cal-tip-date">${dateLabel} · ${games.length} match${games.length !== 1 ? "es" : ""}</div>` +
+        games.map(m => {
+          const home = TEAMS[m.home], away = TEAMS[m.away];
+          const score = Array.isArray(m.score)
+            ? `<span class="cal-tip-score">${m.score[0]}–${m.score[1]}</span> `
+            : "";
+          return `<div class="cal-tip-match">` +
+            `<span class="cal-tip-teams">${score}` +
+            `<img src="${FLAG(home.flag, 40)}" alt="" class="cal-tip-flag"> ${home.name}` +
+            ` <span class="cal-tip-vs">vs</span> ` +
+            `<img src="${FLAG(away.flag, 40)}" alt="" class="cal-tip-flag"> ${away.name}</span>` +
+            `<span class="cal-tip-meta">${fmtTime(m.t)} · ${m.stage}</span>` +
+            `</div>`;
+        }).join("");
+
+      const rect = b.getBoundingClientRect();
+      calTip.style.left = "0";
+      calTip.style.top = "0";
+      calTip.style.transform = "none";
+      calTip.classList.add("visible");
+
+      const tw = calTip.offsetWidth;
+      const th = calTip.offsetHeight;
+      let left = rect.left + rect.width / 2 - tw / 2;
+      let top = rect.bottom + 8;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      if (top + th > window.innerHeight - 8) top = rect.top - th - 8;
+      calTip.style.left = left + "px";
+      calTip.style.top = top + "px";
+    });
+
+    b.addEventListener("mouseleave", () => calTip.classList.remove("visible"));
+  });
 }
 
 function renderTeamChips() {
