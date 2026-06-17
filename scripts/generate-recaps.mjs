@@ -80,12 +80,12 @@ async function generateRecap(match, article) {
   const [hg, ag] = match.score;
   const result = hg > ag ? `${home} won ${hg}–${ag}` : hg < ag ? `${away} won ${ag}–${hg}` : `${home} and ${away} drew ${hg}–${ag}`;
 
-  const prompt = `You write hilariously casual World Cup match recaps — like a group chat message from your funniest friend who actually watched the game.
+  const prompt = `You write funny, casual match recaps for people who want to sound smart about soccer at the office.
 
 Match: ${home} vs ${away} (${result})
 ${article ? `Article:\n${article.slice(0, 1200)}` : '(no article available)'}
 
-Write exactly 2 sentences. Rules: be specific about what happened (name the goals, the drama, the chaos). Use casual language — contractions, slang, rhetorical questions, hyperbole are all fair game. Make it sound like something you'd text a friend, not a press release. No opener like "In an exciting match..." or "Both teams..." — just dive straight into the juicy part. If it was a blowout, acknowledge the carnage. If it was a draw, make it sound appropriately chaotic or boring depending on what happened.`;
+Write exactly 2 sentences — no more. The tone should be like a funny friend giving you a quick debrief so you can drop it into a work conversation without looking clueless. Be specific about what actually happened (goals, key moments, drama). No generic hype. No opener like "In an exciting match..." Just get straight to the good stuff.`;
 
   return callClaude(prompt);
 }
