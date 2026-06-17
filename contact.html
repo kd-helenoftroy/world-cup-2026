@@ -94,11 +94,11 @@
     }
     .contact-value a:hover { color: var(--pitch); text-decoration: underline; }
     .bio { margin-bottom: 24px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); line-height: 1.8; }
-    .bottom-row { display: flex; gap: 24px; align-items: flex-start; }
+    .bottom-row { display: flex; gap: 24px; align-items: stretch; }
     .contact-list { flex: 1; gap: 10px; }
     .contact-label { font-size: 9px; }
     .contact-value { font-size: 12px; }
-    .bio-photo { width: 110px; height: auto; object-fit: cover; object-position: top; border-radius: 8px; flex-shrink: 0; }
+    .bio-photo { width: 110px; height: 100%; object-fit: cover; object-position: top; border-radius: 8px; flex-shrink: 0; }
     @media (max-width: 480px) {
       .card { padding: 24px 18px; }
       .bottom-row { gap: 14px; }
