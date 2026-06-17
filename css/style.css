@@ -366,7 +366,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
   min-height: 0;
 }
 .match-recap:empty { display: none; }
-.recap-point { display: block; color: var(--ink-soft); }
+.recap-point { display: block; color: var(--ink-soft); padding-left: 1.2em; text-indent: -1.2em; }
 
 .ticket .placefoot {
   grid-column: 1 / -1;
