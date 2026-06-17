@@ -628,7 +628,7 @@ footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; font-size: 12p
   .tabs { padding: 0 6px; }
   .tab { padding: 12px 11px 10px; font-size: 13px; }
   .wordmark { gap: 10px; }
-  .contact-btn { font-size: 16px; padding: 6px 10px; border-radius: 8px; }
+  .contact-btn { font-size: 13px; padding: 5px 8px; border-radius: 7px; }
   .playergrid { grid-template-columns: 1fr 1fr; }
   .player { padding: 8px 9px; gap: 8px; }
   .avatar { width: 38px; height: 38px; font-size: 13px; }
