@@ -11,6 +11,7 @@ const API_KEY = process.env.ANTHROPIC_API_KEY;
 if (!API_KEY) { console.error('ANTHROPIC_API_KEY not set'); process.exit(1); }
 
 const FORCE = process.argv.includes('--force');
+const REFRESH_WINDOW_MS = 72 * 3600 * 1000; // always regenerate previews for matches within 72h
 const ESPN_SUMMARY = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary';
 
 /* ---- parse data.js ---- */
@@ -54,7 +55,12 @@ const upcoming = matches.filter(m =>
   new Date(m.t).getTime() > now - 3_600_000
 );
 
-const toGenerate = upcoming.filter(m => FORCE || !previews[m.id]);
+const toGenerate = upcoming.filter(m => {
+  if (FORCE || !previews[m.id]) return true;
+  // always refresh previews for matches happening within the next 72 hours
+  const kickoff = new Date(m.t).getTime();
+  return kickoff - now < REFRESH_WINDOW_MS;
+});
 console.log(`${upcoming.length} upcoming matches · ${toGenerate.length} need previews`);
 
 /* ---- ESPN fetch ---- */
