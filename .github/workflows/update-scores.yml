@@ -2,8 +2,8 @@ name: Refresh match previews
 
 on:
   schedule:
-    # Run once daily at 6 AM UTC to keep upcoming match previews fresh
-    - cron: "0 6 * * *"
+    # Run every 2 hours so recaps appear within ~1h of each match ending
+    - cron: "0 */2 * * *"
   workflow_dispatch:
 
 permissions:
