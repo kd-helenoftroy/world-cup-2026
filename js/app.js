@@ -1105,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderSchedule();
   });
   // calendar export
-  $("#cal-export").addEventListener("click", downloadCalendar);
+  $$(".cal-export-btn").forEach(b => b.addEventListener("click", downloadCalendar));
   renderSchedule();
   loadRecaps();
 
