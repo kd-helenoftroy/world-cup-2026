@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -27,9 +29,12 @@ jobs:
         run: node scripts/generate-previews.mjs
 
       - name: Commit previews if changed
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config user.name "wc26-score-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/kd-helenoftroy/world-cup-2026.git
           git add previews.json
           if git diff --cached --quiet; then
             echo "No new previews."
