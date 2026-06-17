@@ -166,9 +166,18 @@ async function loadPreviews() {
 }
 
 /* =====================================================
-   MATCH RECAPS — ESPN article.story, best 2 sentences
+   MATCH RECAPS — AI-generated from ESPN article, loaded from recaps.json
    ===================================================== */
 const RECAP_CACHE = new Map();
+
+async function loadRecapsJson() {
+  try {
+    const res = await fetch('recaps.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    for (const [espnId, text] of Object.entries(data)) RECAP_CACHE.set(Number(espnId), text);
+  } catch { /* offline / file missing */ }
+}
 
 const _FACT_WORDS = ['scored','goal','minute','red card','penalty','header','hat trick','var','saved','equaliz','opener','brace','dismissed','sent off','own goal','volley','free kick','corner','offside','stoppage'];
 const _SKIP_WORDS = ['sea of','chanting','fans','iconic','shadow of','playing in front','playing in the','sold-out'];
@@ -194,6 +203,7 @@ function _pickBestTwo(storyHTML) {
 
 async function _fetchRecap(espnId) {
   if (RECAP_CACHE.has(espnId)) return RECAP_CACHE.get(espnId);
+  // fall back to raw ESPN article if no AI recap exists yet
   try {
     const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${espnId}`);
     if (!res.ok) { RECAP_CACHE.set(espnId, null); return null; }
@@ -975,7 +985,7 @@ async function loadLiveScores() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await Promise.all([loadLiveScores(), loadPreviews()]);
+  await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson()]);
   refreshModel();
 
   // tabs — each switch re-renders that view so the live model stays current

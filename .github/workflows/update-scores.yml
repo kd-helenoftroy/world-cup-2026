@@ -28,18 +28,23 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/generate-previews.mjs
 
-      - name: Commit previews if changed
+      - name: Generate match recaps
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-recaps.mjs
+
+      - name: Commit if changed
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config user.name "wc26-score-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/kd-helenoftroy/world-cup-2026.git
-          git add previews.json
+          git add previews.json recaps.json
           if git diff --cached --quiet; then
-            echo "No new previews."
+            echo "No changes."
           else
             git pull --no-rebase
-            git commit -m "Refresh match previews"
+            git commit -m "Refresh match previews and recaps"
             git push
           fi
