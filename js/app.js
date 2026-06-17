@@ -1058,6 +1058,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson()]);
   refreshModel();
 
+  // mark current tournament stage in the funnel
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll('.funnel-stage[data-start]').forEach(el => {
+    if (today >= el.dataset.start && today <= el.dataset.end) {
+      el.classList.add('funnel-current');
+      el.querySelector('.funnel-round').insertAdjacentHTML(
+        'beforeend', '<span class="funnel-now">● NOW</span>'
+      );
+    }
+  });
+
   // tabs — each switch re-renders that view so the live model stays current
   $$(".tab").forEach((tab) =>
     tab.addEventListener("click", () => {
