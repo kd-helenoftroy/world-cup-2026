@@ -204,6 +204,32 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--sky
 .cal-tip-score { font-family: "IBM Plex Mono", monospace; color: var(--pitch); font-size: 11px; margin-right: 2px; }
 .cal-tip-meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-soft); }
 
+/* ---------- schedule two-column layout (desktop) ---------- */
+@media (min-width: 820px) {
+  .sched-layout {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .sched-left {
+    position: sticky;
+    top: 50px;
+    max-height: calc(100vh - 58px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sched-left::-webkit-scrollbar { display: none; }
+  #cal-toggle { display: none; }
+  #calendar.calwrap {
+    grid-template-columns: 1fr;
+    max-height: none !important;
+    overflow: visible !important;
+    transition: none !important;
+    margin-bottom: 0 !important;
+  }
+}
+
 .dayheader {
   font-family: "Anton", sans-serif; font-size: 20px; text-transform: uppercase;
   letter-spacing: 0.03em; margin: 26px 0 12px;
