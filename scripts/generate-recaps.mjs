@@ -21,17 +21,18 @@ const teamRe = /([A-Z]{2,3}):\s*\{\s*name:\s*"([^"]+)"/g;
 let tm;
 while ((tm = teamRe.exec(dataJs)) !== null) teams[tm[1]] = tm[2];
 
-const matches = [];
-const matchRe = /\{ id:\s*(\d+),\s+espnId:\s*(\d+),\s+stage:\s*"([^"]+)",\s+t:\s*"([^"]+)",\s+home:\s*"([A-Z]+)",\s+away:\s*"([A-Z]+)"[^}]*score:\s*\[(\d+),\s*(\d+)\]/g;
+const allMatches = [];
+const matchRe = /\{ id:\s*(\d+),\s+espnId:\s*(\d+),\s+stage:\s*"([^"]+)",\s+t:\s*"([^"]+)",\s+home:\s*"([A-Z]+)",\s+away:\s*"([A-Z]+)"/g;
 let mm;
 while ((mm = matchRe.exec(dataJs)) !== null) {
-  matches.push({
-    id: +mm[1], espnId: +mm[2], stage: mm[3], t: mm[4],
-    home: mm[5], away: mm[6], score: [+mm[7], +mm[8]],
-  });
+  allMatches.push({ id: +mm[1], espnId: +mm[2], stage: mm[3], t: mm[4], home: mm[5], away: mm[6] });
 }
 
-console.log(`Found ${matches.length} completed matches`);
+const now = Date.now();
+// matches that kicked off more than 2 hours ago are likely finished
+const matches = allMatches.filter(m => new Date(m.t).getTime() < now - 2 * 3600 * 1000);
+
+console.log(`Found ${matches.length} likely completed matches`);
 
 /* ---- load existing recaps ---- */
 const recaps = existsSync('./recaps.json') ? JSON.parse(readFileSync('./recaps.json', 'utf8')) : {};
@@ -48,9 +49,20 @@ async function fetchArticle(espnId) {
     const res = await fetch(`${ESPN_SUMMARY}?event=${espnId}`);
     if (!res.ok) return null;
     const data = await res.json();
+
+    // extract score from ESPN event competitors
+    let score = null;
+    const comps = data?.header?.competitions?.[0]?.competitors;
+    if (comps) {
+      const home = comps.find(c => c.homeAway === 'home');
+      const away = comps.find(c => c.homeAway === 'away');
+      if (home && away) score = [parseInt(home.score), parseInt(away.score)];
+    }
+
     const html = data?.article?.story || '';
-    return html.replace(/<[^>]+>/g, '').replace(/^[A-Z][A-Z,\s]+--\s*/, '').trim();
-  } catch { return null; }
+    const article = html.replace(/<[^>]+>/g, '').replace(/^[A-Z][A-Z,\s]+--\s*/, '').trim();
+    return { article, score };
+  } catch { return { article: null, score: null }; }
 }
 
 /* ---- Claude call ---- */
@@ -74,11 +86,12 @@ async function callClaude(prompt) {
 }
 
 /* ---- generate recap ---- */
-async function generateRecap(match, article) {
+async function generateRecap(match, { article, score }) {
   const home = teams[match.home] || match.home;
   const away = teams[match.away] || match.away;
-  const [hg, ag] = match.score;
-  const result = hg > ag ? `${home} won ${hg}–${ag}` : hg < ag ? `${away} won ${ag}–${hg}` : `${home} and ${away} drew ${hg}–${ag}`;
+  const result = score
+    ? (score[0] > score[1] ? `${home} won ${score[0]}–${score[1]}` : score[0] < score[1] ? `${away} won ${score[1]}–${score[0]}` : `${home} and ${away} drew ${score[0]}–${score[1]}`)
+    : `${home} vs ${away} (final score unavailable)`;
 
   const prompt = `You write casual match recaps as short talking points — the kind of thing you'd skim before chatting about the game with a friend.
 
@@ -103,8 +116,9 @@ for (let i = 0; i < toGenerate.length; i += BATCH) {
   const batch = toGenerate.slice(i, i + BATCH);
   await Promise.all(batch.map(async (match) => {
     try {
-      const article = await fetchArticle(match.espnId);
-      recaps[match.espnId] = await generateRecap(match, article);
+      const espnData = await fetchArticle(match.espnId);
+      if (!espnData.article && !espnData.score) { console.log(`⚠ ${match.espnId}: no ESPN data, skipping`); return; }
+      recaps[match.espnId] = await generateRecap(match, espnData);
       generated++;
       const home = teams[match.home] || match.home;
       const away = teams[match.away] || match.away;
