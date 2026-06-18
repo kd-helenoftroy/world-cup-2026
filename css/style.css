@@ -203,38 +203,37 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .cal-tip-score { font-family: "IBM Plex Mono", monospace; color: var(--pitch); font-size: 11px; margin-right: 2px; }
 .cal-tip-meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.4); }
 
-/* ---------- day tabs ---------- */
-.day-tabs-bar {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 10px 0 6px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* ---------- schedule two-column layout (desktop) ---------- */
+@media (min-width: 820px) {
+  .sched-layout {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .sched-left {
+    position: sticky;
+    top: 50px;
+    max-height: calc(100vh - 58px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sched-left::-webkit-scrollbar { display: none; }
+  #cal-toggle { display: none; }
+  #calendar.calwrap {
+    grid-template-columns: 1fr;
+    max-height: none !important;
+    overflow: visible !important;
+    transition: none !important;
+    margin-bottom: 0 !important;
+  }
+  .sched-left .calmonth { padding: 10px 10px 8px; }
+  .sched-left .calmonth h4 { font-size: 13px; margin-bottom: 8px; }
+  .sched-left .calgrid { gap: 2px; }
+  .sched-left .calgrid .dowh { font-size: 9px; }
+  .sched-left .calday { font-size: 11px; border-radius: 7px; }
+  .sched-left .calday .dots { font-size: 6px; letter-spacing: 0.5px; }
 }
-.day-tabs-bar::-webkit-scrollbar { display: none; }
-.daytab {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 7px 11px;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  background: var(--paper);
-  cursor: pointer;
-  transition: border-color 0.12s, background 0.12s;
-}
-.daytab:hover { border-color: var(--pitch); }
-.daytab.is-today { border-color: rgba(10,132,255,0.5); }
-.daytab.active { background: var(--pitch); border-color: var(--pitch); }
-.daytab.active .dt-label { color: #fff; }
-.daytab.active .dt-sub { color: rgba(255,255,255,0.7); }
-.daytab.active .today-label { color: var(--gold); }
-.dt-label { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; }
-.dt-sub { font-size: 10px; color: rgba(2, 15, 42, 0.35); font-weight: 600; }
-.today-label { color: var(--pitch); font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 
 .dayheader {
   font-family: "Anton", sans-serif; font-size: 20px; text-transform: uppercase;
@@ -556,6 +555,12 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 }
 .cal-export-btn:hover { border-color: var(--pitch); color: var(--pitch); transform: translateY(-1px); }
 .cal-export-btn:focus-visible { outline: 2px solid var(--pitch); }
+#cal-export { margin-left: auto; }
+#cal-export-mobile { display: none; }
+@media (max-width: 819px) {
+  #cal-export { display: none; }
+  #cal-export-mobile { display: inline-block; }
+}
 
 /* numbered venue markers */
 .vnum-marker span {
@@ -610,9 +615,13 @@ footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; font-size: 12p
   .pill { padding: 6px 11px; font-size: 12px; }
   .filterbar { gap: 7px; }
   select.ctl { max-width: 100%; }
-  .daytab { padding: 5px 9px; }
-  .dt-label { font-size: 11px; }
-  .dt-sub { font-size: 9px; }
+  #calendar.calwrap { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .calmonth { padding: 8px 6px 6px; }
+  .calmonth h4 { font-size: 12px; margin-bottom: 6px; }
+  .calgrid { gap: 2px; }
+  .calgrid .dowh { font-size: 8px; padding-bottom: 2px; }
+  .calday { font-size: 10px; border-radius: 5px; padding: 3px 1px; min-height: 0; }
+  .calday .dots { font-size: 6px; letter-spacing: 0; }
   .gwrow .gwname { flex-basis: 92px; font-size: 12.5px; }
   .oddstable { min-width: 560px; }
   .tabs { padding: 0 6px; }

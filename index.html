@@ -50,48 +50,57 @@
 
   <!-- ============ SCHEDULE ============ -->
   <section id="view-schedule" class="view active">
-    <div class="filterbar">
-      <label>Groups</label>
-      <span id="sched-groups">
-        <button class="pill" data-g="A">A</button><button class="pill" data-g="B">B</button>
-        <button class="pill" data-g="C">C</button><button class="pill" data-g="D">D</button>
-        <button class="pill" data-g="E">E</button><button class="pill" data-g="F">F</button>
-        <button class="pill" data-g="G">G</button><button class="pill" data-g="H">H</button>
-        <button class="pill" data-g="I">I</button><button class="pill" data-g="J">J</button>
-        <button class="pill" data-g="K">K</button><button class="pill" data-g="L">L</button>
-      </span>
+    <div class="sched-layout">
+      <div class="sched-left">
+        <button id="cal-toggle" class="cal-toggle-btn" aria-expanded="true" aria-controls="calendar">
+          <span class="cal-toggle-label">Calendar</span>
+          <span class="cal-chevron" aria-hidden="true">&#8964;</span>
+        </button>
+        <div id="calendar" class="calwrap" aria-label="Tournament calendar: click a day"></div>
+      </div>
+      <div class="sched-right">
+        <div class="filterbar">
+          <span id="sched-quick">
+            <button class="pill active" data-f="upcoming">Upcoming</button>
+            <button class="pill" data-f="today">Today</button>
+            <button class="pill" data-f="tomorrow">Tomorrow</button>
+            <button class="pill" data-f="week">Next 7 days</button>
+            <button class="pill" data-f="yesterday">Yesterday</button>
+            <button class="pill" data-f="past">All previous</button>
+            <button class="pill" data-f="all">Everything</button>
+          </span>
+        </div>
+        <div class="filterbar">
+          <label for="sched-team">Teams</label>
+          <select id="sched-team" class="ctl"></select>
+          <span id="sched-team-chips" class="chips"></span>
+          <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
+          <button id="cal-export-mobile" class="cal-export-btn">&#128197; Export to calendar</button>
+        </div>
+        <div class="filterbar">
+          <label>Groups</label>
+          <span id="sched-groups">
+            <button class="pill" data-g="A">A</button><button class="pill" data-g="B">B</button>
+            <button class="pill" data-g="C">C</button><button class="pill" data-g="D">D</button>
+            <button class="pill" data-g="E">E</button><button class="pill" data-g="F">F</button>
+            <button class="pill" data-g="G">G</button><button class="pill" data-g="H">H</button>
+            <button class="pill" data-g="I">I</button><button class="pill" data-g="J">J</button>
+            <button class="pill" data-g="K">K</button><button class="pill" data-g="L">L</button>
+          </span>
+        </div>
+        <div class="filterbar">
+          <label>Stage</label>
+          <span id="sched-stage">
+            <button class="pill active alt" data-s="all">All</button>
+            <button class="pill alt" data-s="group">Group stage</button>
+            <button class="pill alt" data-s="knockout">Knockout</button>
+          </span>
+          <button id="cal-export" class="cal-export-btn">&#128197; Export to calendar</button>
+        </div>
+        <div id="standings-area"></div>
+        <div id="schedule-list"></div>
+      </div>
     </div>
-    <div class="filterbar">
-      <label>Stage</label>
-      <span id="sched-stage">
-        <button class="pill active alt" data-s="all">All</button>
-        <button class="pill alt" data-s="group">Group stage</button>
-        <button class="pill alt" data-s="knockout">Knockout</button>
-      </span>
-    </div>
-    <div class="filterbar">
-      <label for="sched-team">Teams</label>
-      <select id="sched-team" class="ctl"></select>
-      <span id="sched-team-chips" class="chips"></span>
-      <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
-    </div>
-    <div class="filterbar">
-      <span id="sched-quick">
-        <button class="pill active" data-f="upcoming">Upcoming</button>
-        <button class="pill" data-f="today">Today</button>
-        <button class="pill" data-f="tomorrow">Tomorrow</button>
-        <button class="pill" data-f="week">Next 7 days</button>
-        <button class="pill" data-f="yesterday">Yesterday</button>
-        <button class="pill" data-f="past">All previous</button>
-        <button class="pill" data-f="all">Everything</button>
-      </span>
-    </div>
-    <div class="filterbar">
-      <button class="cal-export-btn" id="cal-export">&#128197; Export to calendar</button>
-    </div>
-    <div id="day-tabs" class="day-tabs-bar"></div>
-    <div id="standings-area"></div>
-    <div id="schedule-list"></div>
   </section>
 
   <!-- ============ PREDICTIONS ============ -->
