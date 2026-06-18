@@ -781,6 +781,7 @@ function renderPath() {
   html += pathStepHTML("The last match standing", KNOCKOUTS.find((k) => k.stage === "Final"), `${T.name} lift the trophy?`, true);
 
   $("#path-rail").innerHTML = html;
+  _injectRecaps();
   const delta = RATINGS[code] - T.strength;
   const deltaTxt = Math.abs(delta) >= 0.05
     ? ` · Elo rating ${RATINGS[code].toFixed(1)} (<span class="${delta > 0 ? "delta-up" : "delta-down"}">${delta > 0 ? "▲" : "▼"}${Math.abs(delta).toFixed(1)}</span> vs. pre-tournament)`
