@@ -469,8 +469,7 @@ function buildDayTabs() {
     const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     const isToday = k === tk;
     const n = byDay[k].length;
-    const todayFilterActive = isToday && !schedF.day && schedF.quick === "today";
-    const cls = ["daytab", schedF.day === k ? "active" : "", isToday ? "is-today" : "", todayFilterActive ? "today-active" : ""].filter(Boolean).join(" ");
+    const cls = ["daytab", schedF.day === k ? "active" : "", isToday ? "is-today" : ""].filter(Boolean).join(" ");
     const sub = isToday
       ? `<span class="dt-sub today-label">TODAY</span>`
       : `<span class="dt-sub">${n} match${n !== 1 ? "es" : ""}</span>`;
