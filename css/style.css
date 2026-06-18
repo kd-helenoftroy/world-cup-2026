@@ -168,6 +168,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 }
 .calday.tbd-day { cursor: pointer; color: rgba(2,15,42,0.4); background: rgba(2,15,42,0.05); transition: transform 0.12s, background 0.12s; }
 .calday.tbd-day:hover { background: rgba(2,15,42,0.09); transform: scale(1.06); }
+.calday.hasgames.tbd-day { background: rgba(2,15,42,0.08); color: var(--ink); }
+.calday.hasgames.tbd-day:hover { background: rgba(2,15,42,0.13); }
 .calday.hasgames {
   cursor: pointer; color: var(--ink); background: var(--pitch-soft);
   transition: transform 0.12s, background 0.12s;
