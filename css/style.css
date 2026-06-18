@@ -601,10 +601,10 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .cal-export-btn:hover { border-color: var(--pitch); color: var(--pitch); transform: translateY(-1px); }
 .cal-export-btn:focus-visible { outline: 2px solid var(--pitch); }
 #cal-export { margin-left: auto; }
-#cal-export-mobile { display: none; }
+#cal-export-mobile-row { display: none; }
 @media (max-width: 819px) {
   #cal-export { display: none; }
-  #cal-export-mobile { display: inline-block; }
+  #cal-export-mobile-row { display: flex; }
 }
 
 /* numbered venue markers */
