@@ -204,6 +204,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .cal-tip-meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.4); }
 
 /* ---------- schedule two-column layout (desktop) ---------- */
+#day-tabs { display: none; }
 @media (min-width: 820px) {
   .sched-layout {
     display: grid;
@@ -234,6 +235,42 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   .sched-left .calday { font-size: 11px; border-radius: 7px; }
   .sched-left .calday .dots { font-size: 6px; letter-spacing: 0.5px; }
 }
+@media (max-width: 819px) {
+  .sched-left { display: none; }
+  #day-tabs { display: flex; }
+}
+
+/* ---------- day tabs (mobile) ---------- */
+.day-tabs-bar {
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.day-tabs-bar::-webkit-scrollbar { display: none; }
+.daytab {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 11px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.daytab:hover { border-color: var(--pitch); }
+.daytab.is-today { border-color: rgba(10,132,255,0.5); }
+.daytab.active { background: var(--pitch); border-color: var(--pitch); }
+.daytab.active .dt-label { color: #fff; }
+.daytab.active .dt-sub { color: rgba(255,255,255,0.7); }
+.daytab.active .today-label { color: var(--gold); }
+.dt-label { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.dt-sub { font-size: 10px; color: rgba(2, 15, 42, 0.35); font-weight: 600; }
+.today-label { color: var(--pitch); font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 
 .dayheader {
   font-family: "Anton", sans-serif; font-size: 20px; text-transform: uppercase;

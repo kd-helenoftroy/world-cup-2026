@@ -456,6 +456,37 @@ function buildCalendar() {
   });
 }
 
+function buildDayTabs() {
+  const el = $("#day-tabs");
+  if (!el) return;
+  const byDay = {};
+  filterableGames().forEach((m) => (byDay[dayKey(m.t)] ??= []).push(m));
+  if (schedF.day && !byDay[schedF.day]) schedF.day = null;
+
+  const tk = todayKey();
+  el.innerHTML = Object.keys(byDay).sort().map(k => {
+    const date = new Date(k + "T12:00:00");
+    const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const isToday = k === tk;
+    const n = byDay[k].length;
+    const cls = ["daytab", schedF.day === k ? "active" : "", isToday ? "is-today" : ""].filter(Boolean).join(" ");
+    const sub = isToday
+      ? `<span class="dt-sub today-label">TODAY</span>`
+      : `<span class="dt-sub">${n} match${n !== 1 ? "es" : ""}</span>`;
+    return `<button class="${cls}" data-day="${k}"><span class="dt-label">${label}</span>${sub}</button>`;
+  }).join("");
+
+  $$("#day-tabs .daytab").forEach(b => {
+    b.addEventListener("click", () => {
+      schedF.day = schedF.day === b.dataset.day ? null : b.dataset.day;
+      renderSchedule();
+    });
+  });
+
+  const focus = el.querySelector(".daytab.active") || el.querySelector(".daytab.is-today");
+  if (focus) focus.scrollIntoView({ behavior: "instant", block: "nearest", inline: "center" });
+}
+
 function renderTeamChips() {
   $("#sched-team-chips").innerHTML = [...schedF.teams]
     .map((c) => `<span class="chip"><img src="${FLAG(TEAMS[c].flag, 40)}" alt="">${TEAMS[c].name} (#${TEAMS[c].rank})<button data-c="${c}" aria-label="Remove ${TEAMS[c].name}">✕</button></span>`)
@@ -593,6 +624,7 @@ function renderSchedule() {
   $$("#sched-stage .pill").forEach((p) => p.classList.toggle("active", p.dataset.s === schedF.stage));
   $("#sched-clear").disabled = !filtersActive();
   buildCalendar();
+  buildDayTabs();
   renderTeamChips();
 
   const games = gamesForFilter();
