@@ -106,65 +106,39 @@ jobs:
   previews:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
-          ref: main
-          clean: true
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      - name: Clone repo fresh
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          git clone https://x-access-token:${PAT_TOKEN}@github.com/kd-helenoftroy/world-cup-2026.git /tmp/repo
+          cd /tmp/repo
+          git config user.name "wc26-score-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Generate match previews
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/generate-previews.mjs
+        run: cd /tmp/repo && node scripts/generate-previews.mjs
 
       - name: Generate match recaps
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/generate-recaps.mjs
+        run: cd /tmp/repo && node scripts/generate-recaps.mjs
 
       - name: Commit if changed
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          node - <<'EOF'
-          const fs = require('fs');
-          const token = process.env.PAT_TOKEN;
-          const repo = 'kd-helenoftroy/world-cup-2026';
-          const branch = 'main';
-
-          async function getFileSha(path) {
-            const r = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`, {
-              headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'wc26-score-bot' }
-            });
-            if (!r.ok) return null;
-            return (await r.json()).sha;
-          }
-
-          async function updateFile(path) {
-            const local = fs.readFileSync(path, 'utf8');
-            const sha = await getFileSha(path);
-            const remote = sha ? Buffer.from((await (await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`, {
-              headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'wc26-score-bot' }
-            })).json()).content.replace(/\n/g, ''), 'base64').toString() : null;
-            if (remote === local) { console.log(`${path}: no change`); return false; }
-            const r = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-              method: 'PUT',
-              headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': 'wc26-score-bot' },
-              body: JSON.stringify({ message: 'Refresh match previews and recaps', content: Buffer.from(local).toString('base64'), sha, branch })
-            });
-            if (!r.ok) { console.error(`${path}: push failed`, await r.text()); return false; }
-            console.log(`${path}: updated`);
-            return true;
-          }
-
-          (async () => {
-            await updateFile('previews.json');
-            await updateFile('recaps.json');
-          })();
-          EOF
+          cd /tmp/repo
+          git add previews.json recaps.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Refresh match previews and recaps"
+            git push
+          fi
