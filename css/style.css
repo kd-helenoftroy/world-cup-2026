@@ -241,6 +241,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   .filterbar label { font-size: 9px; }
   .pill { font-size: 10px; padding: 4px 8px; }
   #sched-groups .pill, #view-teams .groupnav .pill { width: 28px; padding-left: 0; padding-right: 0; text-align: center; }
+  #sched-groups, #view-teams .groupnav { display: flex; flex-wrap: wrap; gap: 5px; }
   select.ctl { font-size: 11px; padding: 6px 8px; }
   .clearbtn { font-size: 10px; padding: 4px 10px; }
   .cal-export-btn { font-size: 10px; padding: 3px 8px; }
