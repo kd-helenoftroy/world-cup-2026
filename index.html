@@ -51,13 +51,6 @@
   <!-- ============ SCHEDULE ============ -->
   <section id="view-schedule" class="view active">
     <div class="filterbar">
-      <label for="sched-team">Teams</label>
-      <select id="sched-team" class="ctl"></select>
-      <span id="sched-team-chips" class="chips"></span>
-      <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
-      <button class="cal-export-btn" id="cal-export">&#128197; Export to calendar</button>
-    </div>
-    <div class="filterbar">
       <label>Groups</label>
       <span id="sched-groups">
         <button class="pill" data-g="A">A</button><button class="pill" data-g="B">B</button>
@@ -75,6 +68,13 @@
         <button class="pill alt" data-s="group">Group stage</button>
         <button class="pill alt" data-s="knockout">Knockout</button>
       </span>
+    </div>
+    <div class="filterbar">
+      <label for="sched-team">Teams</label>
+      <select id="sched-team" class="ctl"></select>
+      <span id="sched-team-chips" class="chips"></span>
+      <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
+      <button class="cal-export-btn" id="cal-export">&#128197; Export to calendar</button>
     </div>
     <div class="filterbar">
       <span id="sched-quick">
