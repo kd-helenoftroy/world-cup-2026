@@ -147,6 +147,20 @@ const oddsToImplied = (american) => 100 / (parseInt(american.replace("+", ""), 1
 /* =====================================================
    MATCH PREVIEWS — AI-generated, loaded from previews.json
    ===================================================== */
+/* =====================================================
+   PLAYER PHOTOS — ESPN headshot IDs loaded from player-photos.json
+   ===================================================== */
+const PHOTO_CACHE = {};
+
+async function loadPlayerPhotos() {
+  try {
+    const res = await fetch('player-photos.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    Object.assign(PHOTO_CACHE, data);
+  } catch { /* offline / file missing */ }
+}
+
 const PREVIEW_CACHE = new Map();
 
 function _renderPreview(text) {
@@ -783,9 +797,12 @@ function teamCardHTML(code) {
   const t = TEAMS[code];
   const players = (ROSTERS[code] || [])
     .map(([name, pos, club, age]) => {
-      const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+      const espnId = PHOTO_CACHE[name];
+      const avatarHTML = espnId
+        ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" onerror="this.outerHTML='<div class=\\"avatar\\" aria-hidden=\\"true\\">${name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>'">`
+        : `<div class="avatar" aria-hidden="true">${name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</div>`;
       return `<div class="player">
-        <div class="avatar" aria-hidden="true">${initials}</div>
+        ${avatarHTML}
         <div>
           <div class="p-name">${name}</div>
           <div class="p-sub"><span class="pos">${pos}</span> · ${age} yrs · ${club}</div>
@@ -1055,7 +1072,7 @@ async function loadLiveScores() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson()]);
+  await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson(), loadPlayerPhotos()]);
   refreshModel();
 
   // mark current tournament stage in the funnel
