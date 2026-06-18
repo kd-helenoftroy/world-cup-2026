@@ -238,6 +238,14 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 @media (max-width: 819px) {
   .sched-left { display: none; }
   #day-tabs { display: flex; }
+  .filterbar label { font-size: 9px; }
+  .pill { font-size: 10px; padding: 5px 10px; }
+  select.ctl { font-size: 11px; padding: 7px 10px; }
+  .clearbtn { font-size: 11px; padding: 5px 12px; }
+  .cal-export-btn { font-size: 11px; padding: 4px 10px; }
+  .daytab { padding: 5px 8px; }
+  .dt-label { font-size: 10px; }
+  .dt-sub { font-size: 9px; }
 }
 
 /* ---------- day tabs (mobile) ---------- */
