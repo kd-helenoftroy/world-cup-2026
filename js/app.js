@@ -371,89 +371,39 @@ function filterableGames() {
   return games;
 }
 
-function buildCalendar() {
+function buildDayTabs() {
+  const el = $("#day-tabs");
+  if (!el) return;
   const byDay = {};
   filterableGames().forEach((m) => (byDay[dayKey(m.t)] ??= []).push(m));
-  if (schedF.day && !byDay[schedF.day]) schedF.day = null; // selected day filtered out
+  if (schedF.day && !byDay[schedF.day]) schedF.day = null;
+
   const tk = todayKey();
-  const months = [{ y: 2026, mo: 5, label: "June 2026" }, { y: 2026, mo: 6, label: "July 2026" }];
-  const dows = ["S", "M", "T", "W", "T", "F", "S"];
+  const days = Object.keys(byDay).sort();
 
-  $("#calendar").innerHTML = months
-    .map(({ y, mo, label }) => {
-      const first = new Date(y, mo, 1);
-      const daysIn = new Date(y, mo + 1, 0).getDate();
-      let cells = dows.map((d) => `<span class="dowh">${d}</span>`).join("");
-      cells += `<span></span>`.repeat(first.getDay());
-      for (let d = 1; d <= daysIn; d++) {
-        const k = `${y}-${String(mo + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-        const games = byDay[k] || [];
-        const ko = games.length && games.every((g) => !g.stage.startsWith("Group"));
-        const cls = ["calday", games.length ? "hasgames" : "", ko ? "ko-day" : "", k === tk ? "today" : "", schedF.day === k ? "selected" : ""].join(" ");
-        const dots = games.length ? `<span class="dots">${"●".repeat(Math.min(games.length, 6))}</span>` : `<span class="dots">&nbsp;</span>`;
-        cells += games.length
-          ? `<button class="${cls}" data-day="${k}" aria-label="${label.split(" ")[0]} ${d}, ${games.length} matches">${d}${dots}</button>`
-          : `<span class="${cls}">${d}${dots}</span>`;
-      }
-      return `<div class="calmonth"><h4>${label}</h4><div class="calgrid">${cells}</div></div>`;
-    })
-    .join("");
+  el.innerHTML = days.map(k => {
+    const date = new Date(k + "T12:00:00");
+    const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const isToday = k === tk;
+    const isActive = schedF.day === k;
+    const ko = byDay[k].every(g => !g.stage.startsWith("Group"));
+    const cls = ["daytab", isActive ? "active" : "", isToday ? "is-today" : "", ko ? "ko-day" : ""].filter(Boolean).join(" ");
+    const n = byDay[k].length;
+    const sub = isToday
+      ? `<span class="dt-sub today-label">TODAY</span>`
+      : `<span class="dt-sub">${n} match${n !== 1 ? "es" : ""}</span>`;
+    return `<button class="${cls}" data-day="${k}"><span class="dt-label">${label}</span>${sub}</button>`;
+  }).join("");
 
-  $$("#calendar .calday.hasgames").forEach((b) =>
+  $$("#day-tabs .daytab").forEach(b => {
     b.addEventListener("click", () => {
       schedF.day = schedF.day === b.dataset.day ? null : b.dataset.day;
       renderSchedule();
-    })
-  );
-
-  // hover tooltip
-  let calTip = document.getElementById("cal-tooltip");
-  if (!calTip) {
-    calTip = document.createElement("div");
-    calTip.id = "cal-tooltip";
-    calTip.className = "cal-tooltip";
-    document.body.appendChild(calTip);
-  }
-
-  $$("#calendar .calday.hasgames").forEach((b) => {
-    b.addEventListener("mouseenter", () => {
-      if (window.matchMedia("(hover: none)").matches) return;
-      const k = b.dataset.day;
-      const games = byDay[k] || [];
-      const dateLabel = new Date(k + "T12:00:00").toLocaleDateString([], { month: "long", day: "numeric" });
-      calTip.innerHTML = `<div class="cal-tip-date">${dateLabel} · ${games.length} match${games.length !== 1 ? "es" : ""}</div>` +
-        games.map(m => {
-          const home = TEAMS[m.home], away = TEAMS[m.away];
-          const score = Array.isArray(m.score)
-            ? `<span class="cal-tip-score">${m.score[0]}–${m.score[1]}</span> `
-            : "";
-          return `<div class="cal-tip-match">` +
-            `<span class="cal-tip-teams">${score}` +
-            `<img src="${FLAG(home.flag, 40)}" alt="" class="cal-tip-flag"> ${home.name}` +
-            ` <span class="cal-tip-vs">vs</span> ` +
-            `<img src="${FLAG(away.flag, 40)}" alt="" class="cal-tip-flag"> ${away.name}</span>` +
-            `<span class="cal-tip-meta">${fmtTime(m.t)} · ${m.stage}</span>` +
-            `</div>`;
-        }).join("");
-
-      const rect = b.getBoundingClientRect();
-      calTip.style.left = "0";
-      calTip.style.top = "0";
-      calTip.style.transform = "none";
-      calTip.classList.add("visible");
-
-      const tw = calTip.offsetWidth;
-      const th = calTip.offsetHeight;
-      let left = rect.left + rect.width / 2 - tw / 2;
-      let top = rect.bottom + 8;
-      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
-      if (top + th > window.innerHeight - 8) top = rect.top - th - 8;
-      calTip.style.left = left + "px";
-      calTip.style.top = top + "px";
     });
-
-    b.addEventListener("mouseleave", () => calTip.classList.remove("visible"));
   });
+
+  const focus = el.querySelector(".daytab.active") || el.querySelector(".daytab.is-today");
+  if (focus) focus.scrollIntoView({ behavior: "instant", block: "nearest", inline: "center" });
 }
 
 function renderTeamChips() {
@@ -592,7 +542,7 @@ function renderSchedule() {
   $$("#sched-groups .pill").forEach((p) => p.classList.toggle("active", schedF.groups.has(p.dataset.g)));
   $$("#sched-stage .pill").forEach((p) => p.classList.toggle("active", p.dataset.s === schedF.stage));
   $("#sched-clear").disabled = !filtersActive();
-  buildCalendar();
+  buildDayTabs();
   renderTeamChips();
 
   const games = gamesForFilter();
@@ -613,7 +563,7 @@ function renderSchedule() {
   if (!out && schedF.teams.size && schedF.stage !== "group") {
     out = `<div class="empty-day">No scheduled matches for this filter yet — knockout opponents aren't set until the group stage wraps on June 27. Check the <b>Path to the Trophy</b> tab for projected routes.</div>`;
   }
-  $("#schedule-list").innerHTML = out || `<div class="empty-day">No matches in this window — click a highlighted day on the calendar, or hit ✕ Clear filters.</div>`;
+  $("#schedule-list").innerHTML = out || `<div class="empty-day">No matches in this window — try a different day or hit ✕ Clear filters.</div>`;
   _injectRecaps();
 
   $("#standings-area").innerHTML = schedF.groups.size
@@ -1142,23 +1092,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderSchedule();
   });
   // calendar export
-  $$(".cal-export-btn").forEach(b => b.addEventListener("click", downloadCalendar));
+  $("#cal-export")?.addEventListener("click", downloadCalendar);
   renderSchedule();
   loadRecaps();
 
-  // calendar toggle
-  const calToggle = $("#cal-toggle");
-  const calWrap = $("#calendar");
-  const CAL_KEY = "wc26-cal-collapsed";
-  if (localStorage.getItem(CAL_KEY) === "1") {
-    calWrap.classList.add("cal-collapsed");
-    calToggle.setAttribute("aria-expanded", "false");
-  }
-  calToggle.addEventListener("click", () => {
-    const collapsed = calWrap.classList.toggle("cal-collapsed");
-    calToggle.setAttribute("aria-expanded", String(!collapsed));
-    localStorage.setItem(CAL_KEY, collapsed ? "1" : "0");
-  });
 
   // map filters
   $("#map-team").innerHTML = TEAM_OPT("", "All teams");
