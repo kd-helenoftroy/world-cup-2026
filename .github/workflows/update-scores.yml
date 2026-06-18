@@ -135,7 +135,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git pull --no-rebase
             git commit -m "Refresh match previews and recaps"
+            git pull --rebase
             git push
           fi
