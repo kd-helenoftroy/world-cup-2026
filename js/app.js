@@ -793,14 +793,22 @@ function renderPath() {
 /* =====================================================
    VIEW 4 — TEAMS & ROSTERS
    ===================================================== */
+function _playerPhotoFallback(img) {
+  const div = document.createElement('div');
+  div.className = 'avatar';
+  div.textContent = img.dataset.initials;
+  img.replaceWith(div);
+}
+
 function teamCardHTML(code) {
   const t = TEAMS[code];
   const players = (ROSTERS[code] || [])
     .map(([name, pos, club, age]) => {
+      const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
       const espnId = PHOTO_CACHE[name];
       const avatarHTML = espnId
-        ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" onerror="this.outerHTML='<div class=\\"avatar\\" aria-hidden=\\"true\\">${name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()}</div>'">`
-        : `<div class="avatar" aria-hidden="true">${name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</div>`;
+        ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" data-initials="${initials}" onerror="_playerPhotoFallback(this)">`
+        : `<div class="avatar" aria-hidden="true">${initials}</div>`;
       return `<div class="player">
         ${avatarHTML}
         <div>
