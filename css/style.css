@@ -166,6 +166,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   cursor: default;
 }
+.calday.no-games { color: rgba(2,15,42,0.3); background: rgba(2,15,42,0.04); }
 .calday.hasgames {
   cursor: pointer; color: var(--ink); background: var(--pitch-soft);
   transition: transform 0.12s, background 0.12s;
