@@ -109,12 +109,13 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
 
-      - name: Pull latest changes
+      - name: Sync to latest main
         run: |
           git config user.name "wc26-score-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/kd-helenoftroy/world-cup-2026.git
-          git pull --rebase
+          git fetch origin
+          git reset --hard origin/main
 
       - name: Set up Node
         uses: actions/setup-node@v4
