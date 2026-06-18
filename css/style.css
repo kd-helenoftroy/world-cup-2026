@@ -233,7 +233,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .daytab.active .dt-sub { color: rgba(255,255,255,0.7); }
 .daytab.active .today-label { color: var(--gold); }
 .dt-label { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; }
-.dt-sub { font-size: 10px; color: var(--ink-soft); font-weight: 600; }
+.dt-sub { font-size: 10px; color: rgba(2, 15, 42, 0.35); font-weight: 600; }
 .today-label { color: var(--pitch); font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 
 .dayheader {
