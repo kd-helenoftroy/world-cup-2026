@@ -240,8 +240,6 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   #day-tabs { display: flex; }
   .filterbar label { font-size: 9px; }
   .pill { font-size: 10px; padding: 4px 8px; }
-  #sched-groups { display: flex; flex-wrap: nowrap; gap: 4px; width: 100%; }
-  #sched-groups .pill { flex: 1; padding-left: 0; padding-right: 0; text-align: center; min-width: 0; font-size: 9px; }
   select.ctl { font-size: 11px; padding: 6px 8px; }
   .clearbtn { font-size: 9px; padding: 2px 8px; line-height: 1.2; }
   .cal-export-btn { font-size: 10px; padding: 3px 8px; }
