@@ -97,7 +97,7 @@ async function generatePreview(match, espnData) {
 
   let formLines = '';
   for (const td of espnData?.lastFiveGames || []) {
-    const events = (td.events || []).slice(0, 3).map(e =>
+    const events = (td.events || []).slice(-5).reverse().map(e =>
       `${e.gameResult || '?'} ${e.score} vs ${e.opponent?.displayName || '?'}`
     ).join(', ');
     if (events) formLines += `${td.team.displayName}: ${events}\n`;
