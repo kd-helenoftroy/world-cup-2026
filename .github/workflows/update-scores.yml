@@ -106,6 +106,9 @@ jobs:
   previews:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug — confirm yaml version
+        run: echo "YAML loaded from commit aa2c67c or later — fresh clone approach"
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
