@@ -506,14 +506,14 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 /* completed games */
 .ticket.done {
   cursor: pointer;
-  background: linear-gradient(135deg, #FFFDF5, #FFF3C4);
-  border-color: rgba(210, 160, 20, 0.45);
+  background: linear-gradient(135deg, #FFFEFC, #FFF8DC);
+  border-color: rgba(210, 160, 20, 0.35);
   box-shadow: 0 2px 10px rgba(2, 15, 42, 0.1);
   text-decoration: none;
   color: var(--ink);
 }
-.ticket.done::before { border-left-color: rgba(210, 160, 20, 0.5); }
-.ticket.done .placefoot { border-top-color: rgba(210, 160, 20, 0.3); }
+.ticket.done::before { border-left-color: rgba(210, 160, 20, 0.4); }
+.ticket.done .placefoot { border-top-color: rgba(210, 160, 20, 0.25); }
 .ticket.done:hover { border-color: var(--coral); box-shadow: 0 4px 16px rgba(2, 15, 42, 0.15); }
 .hl {
   color: var(--coral); font-weight: 800; font-size: 12px;
