@@ -109,6 +109,13 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
 
+      - name: Pull latest changes
+        run: |
+          git config user.name "wc26-score-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/kd-helenoftroy/world-cup-2026.git
+          git pull --rebase
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -125,17 +132,11 @@ jobs:
         run: node scripts/generate-recaps.mjs
 
       - name: Commit if changed
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          git config user.name "wc26-score-bot"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/kd-helenoftroy/world-cup-2026.git
           git add previews.json recaps.json
           if git diff --cached --quiet; then
             echo "No changes."
           else
             git commit -m "Refresh match previews and recaps"
-            git pull --rebase
             git push
           fi
