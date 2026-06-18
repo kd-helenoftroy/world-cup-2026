@@ -127,7 +127,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .pill:hover { border-color: var(--pitch); color: var(--ink); transform: translateY(-1px); }
 .pill:focus-visible { outline: 2px solid var(--pitch); }
 .pill.active { background: var(--pitch); border-color: var(--pitch); color: #fff; }
-.pill.active.alt { background: var(--coral); border-color: var(--coral); }
+.pill.active.alt { background: var(--pitch); border-color: var(--pitch); }
 
 /* ---------- calendar ---------- */
 .cal-toggle-btn {
