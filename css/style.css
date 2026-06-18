@@ -269,6 +269,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   background: var(--paper);
   cursor: pointer;
   transition: border-color 0.12s, background 0.12s;
+  -webkit-tap-highlight-color: transparent;
 }
 @media (hover: hover) { .daytab:hover { border-color: var(--pitch); } }
 .daytab:focus { outline: none; }
