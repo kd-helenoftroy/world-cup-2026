@@ -73,8 +73,8 @@ header { padding: 30px 20px 8px; max-width: 1140px; margin: 0 auto; }
 /* ---------- nav tabs ---------- */
 nav {
   position: sticky; top: 0; z-index: 600;
-  background: rgba(2, 15, 42, 0.97);
-  backdrop-filter: blur(10px);
+  background: #045694;
+  backdrop-filter: none;
   border-bottom: none;
   margin-top: 16px;
 }
