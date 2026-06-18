@@ -240,7 +240,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   #day-tabs { display: flex; }
   .filterbar label { font-size: 9px; }
   .pill { font-size: 10px; padding: 4px 8px; }
-  #sched-groups, #view-teams .groupnav { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+  #sched-groups, #view-teams .groupnav { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
   #sched-groups .pill, #view-teams .groupnav .pill { width: auto; padding-left: 0; padding-right: 0; text-align: center; }
   select.ctl { font-size: 11px; padding: 6px 8px; }
   .clearbtn { font-size: 10px; padding: 4px 10px; }
