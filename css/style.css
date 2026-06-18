@@ -271,7 +271,6 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   transition: border-color 0.12s, background 0.12s;
 }
 .daytab:hover { border-color: var(--pitch); }
-.daytab.is-today { border-color: rgba(10,132,255,0.5); }
 .daytab.active { background: var(--pitch); border-color: var(--pitch); }
 .daytab.active .dt-label { color: #fff; }
 .daytab.active .dt-sub { color: rgba(255,255,255,0.7); }
