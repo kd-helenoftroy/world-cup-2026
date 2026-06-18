@@ -2,7 +2,9 @@ name: Refresh match previews
 
 on:
   schedule:
-    # Fires ~115 min after each match kickoff (one trigger per match)
+    # Every 2 hours to keep previews fresh
+    - cron: "0 */2 * * *"
+    # Fires ~115 min after each match kickoff to generate recaps
     - cron: "55 20 11 6 *"
     - cron: "55 3 12 6 *"
     - cron: "55 20 12 6 *"
