@@ -29,8 +29,8 @@ while ((mm = matchRe.exec(dataJs)) !== null) {
 }
 
 const now = Date.now();
-// matches that kicked off more than 2 hours ago are likely finished
-const matches = allMatches.filter(m => new Date(m.t).getTime() < now - 2 * 3600 * 1000);
+// matches that kicked off more than 100 minutes ago are likely finished
+const matches = allMatches.filter(m => new Date(m.t).getTime() < now - 100 * 60 * 1000);
 
 console.log(`Found ${matches.length} likely completed matches`);
 
