@@ -172,8 +172,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 }
 .calday.hasgames:hover { background: rgba(10,132,255,0.18); transform: scale(1.06); }
 .calday.hasgames:focus-visible { outline: 2px solid var(--pitch); }
-.calday .dots { font-size: 8px; line-height: 1; color: var(--pitch); letter-spacing: 1px; }
-.calday.ko-day .dots { color: var(--coral); }
+.calday .dots { display: none; }
 .calday.today { box-shadow: inset 0 0 0 2px var(--pitch); }
 .calday.selected { background: var(--pitch); color: #fff; }
 .calday.selected .dots { color: var(--gold); }
