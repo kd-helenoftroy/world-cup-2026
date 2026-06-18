@@ -389,8 +389,7 @@ function buildCalendar() {
         const k = `${y}-${String(mo + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
         const games = byDay[k] || [];
         const ko = games.length && games.every((g) => !g.stage.startsWith("Group"));
-        const inRange = !games.length && k >= "2026-06-11" && k <= "2026-07-19";
-        const cls = ["calday", games.length ? "hasgames" : "", ko ? "ko-day" : "", inRange ? "no-games" : "", k === tk ? "today" : "", schedF.day === k ? "selected" : ""].join(" ");
+        const cls = ["calday", games.length ? "hasgames" : "", ko ? "ko-day" : "", k === tk ? "today" : "", schedF.day === k ? "selected" : ""].join(" ");
         const dots = games.length ? `<span class="dots">${"●".repeat(Math.min(games.length, 6))}</span>` : `<span class="dots">&nbsp;</span>`;
         cells += games.length
           ? `<button class="${cls}" data-day="${k}" aria-label="${label.split(" ")[0]} ${d}, ${games.length} matches">${d}${dots}</button>`
