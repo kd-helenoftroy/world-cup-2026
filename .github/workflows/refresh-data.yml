@@ -1,4 +1,4 @@
-name: Refresh match previews
+name: WC26 Data Refresh
 
 on:
   schedule:
