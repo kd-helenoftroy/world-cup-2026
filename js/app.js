@@ -911,12 +911,27 @@ function teamCardHTML(code) {
   </div>`;
 }
 
+const teamsF = new Set();
+
+function renderTeamsChips() {
+  $("#teams-chips").innerHTML = [...teamsF]
+    .map((c) => `<span class="chip"><img src="${FLAG(TEAMS[c].flag, 40)}" alt="${TEAMS[c].name} flag">${TEAMS[c].name}<button data-c="${c}" aria-label="Remove ${TEAMS[c].name}">✕</button></span>`)
+    .join("");
+  $$("#teams-chips button").forEach((b) =>
+    b.addEventListener("click", () => { teamsF.delete(b.dataset.c); renderTeams(); })
+  );
+}
+
 function renderTeams() {
-  const teamF = $("#teams-team").value;
   const group = $(".groupnav .pill.active")?.dataset.g || "A";
-  $("#teams-list").innerHTML = teamF
-    ? teamCardHTML(teamF)
-    : Object.entries(TEAMS).filter(([, t]) => t.group === group).map(([code]) => teamCardHTML(code)).join("");
+  renderTeamsChips();
+  if (teamsF.size > 0) {
+    $("#teams-list").innerHTML = [...teamsF].map(teamCardHTML).join("");
+  } else {
+    $("#teams-list").innerHTML = Object.entries(TEAMS)
+      .filter(([, t]) => t.group === group)
+      .map(([code]) => teamCardHTML(code)).join("");
+  }
 }
 
 /* =====================================================
@@ -1264,11 +1279,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPath();
 
   // teams
-  $("#teams-team").innerHTML = TEAM_OPT("", "Browse by group");
-  $("#teams-team").addEventListener("change", renderTeams);
+  $("#teams-team").innerHTML = TEAM_OPT("", "+ Add a team…");
+  $("#teams-team").addEventListener("change", (e) => {
+    if (e.target.value) { teamsF.add(e.target.value); e.target.value = ""; }
+    renderTeams();
+  });
   $$(".groupnav .pill").forEach((p) =>
     p.addEventListener("click", () => {
-      $("#teams-team").value = "";
+      teamsF.clear();
       $$(".groupnav .pill").forEach((x) => x.classList.toggle("active", x === p));
       renderTeams();
     })
