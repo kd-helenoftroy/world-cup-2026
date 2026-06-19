@@ -249,7 +249,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   .pill { font-size: 10px; padding: 4px 8px; }
   #sched-quick .pill { font-size: 9px; }
   select.ctl { font-size: 11px; padding: 6px 8px; }
-  .clearbtn { font-size: 11px; padding: 5px 10px; }
+  .clearbtn { font-size: 9px; padding: 3px 8px; }
   .cal-export-btn { font-size: 10px; padding: 3px 8px; }
   .daytab { padding: 5px 8px; }
   .dt-label { font-size: 10px; }
@@ -598,8 +598,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .chip button:focus-visible { outline: 2px solid var(--ink); }
 .clearbtn {
   background: var(--coral); border: 1.5px solid var(--coral); color: #fff;
-  border-radius: 999px; padding: 7px 16px;
-  font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow);
+  border-radius: 999px; padding: 4px 10px;
+  font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow);
   transition: transform 0.12s;
 }
 .clearbtn:hover { transform: translateY(-1px); }
