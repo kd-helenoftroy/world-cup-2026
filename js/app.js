@@ -867,11 +867,15 @@ function teamCardHTML(code) {
     const avatarHTML = espnId
       ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" data-initials="${initials}" onerror="_playerPhotoFallback(this)">`
       : `<div class="avatar" aria-hidden="true">${initials}</div>`;
+    const raw = MARKET_VALUES?.[name];
+    const valHTML = typeof raw === 'number'
+      ? `<span class="p-val">${raw >= 1e6 ? '€' + (raw / 1e6).toFixed(raw % 1e6 === 0 ? 0 : 1) + 'm' : '€' + (raw / 1e3).toFixed(0) + 'k'}</span>`
+      : '';
     return `<div class="player">
         ${avatarHTML}
         <div>
           <div class="p-name">${name}</div>
-          <div class="p-sub">${age} yrs · ${club}</div>
+          <div class="p-sub">${age} yrs · ${club}${valHTML ? ' · ' + valHTML : ''}</div>
         </div>
       </div>`;
   }
