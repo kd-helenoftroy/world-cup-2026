@@ -620,6 +620,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   #cal-export { display: none; }
   #sched-clear { display: none; }
   #cal-export-mobile-row { display: flex; align-items: center; margin-bottom: 18px; }
+  #cal-export-mobile-row .cal-export-btn,
+  #cal-export-mobile-row .clearbtn { font-size: 9px; }
 }
 
 /* numbered venue markers */
