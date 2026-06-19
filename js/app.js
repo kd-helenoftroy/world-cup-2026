@@ -402,7 +402,9 @@ function buildCalendar() {
 
   $$("#calendar .calday.hasgames").forEach((b) =>
     b.addEventListener("click", () => {
-      schedF.day = schedF.day === b.dataset.day ? null : b.dataset.day;
+      const newDay = schedF.day === b.dataset.day ? null : b.dataset.day;
+      if (newDay) posthog.capture('schedule_day_selected', { day: newDay });
+      schedF.day = newDay;
       renderSchedule();
     })
   );
@@ -479,7 +481,9 @@ function buildDayTabs() {
 
   $$("#day-tabs .daytab").forEach(b => {
     b.addEventListener("click", () => {
-      schedF.day = schedF.day === b.dataset.day ? null : b.dataset.day;
+      const newDay = schedF.day === b.dataset.day ? null : b.dataset.day;
+      if (newDay) posthog.capture('schedule_day_selected', { day: newDay });
+      schedF.day = newDay;
       renderSchedule();
     });
   });
@@ -545,6 +549,8 @@ function _icsFold(line) {
 function downloadCalendar() {
   const matches = gamesForFilter().filter(m => !Array.isArray(m.score) && !m.liveScore);
   if (!matches.length) { alert('No upcoming matches match your current filters.'); return; }
+
+  posthog.capture('calendar_exported', { match_count: matches.length });
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -716,6 +722,7 @@ function renderMarkers() {
                  games.slice(shown.length).map((m) => makeRow(m, true)).join("");
     marker.bindPopup(`${popupHeader}${rows}${games.length > shown.length ? `<div class="popup-more">+ ${games.length - shown.length} more here</div>` : ""}`);
     marker.on("popupopen", (e) => {
+      posthog.capture('map_venue_popup_opened', { venue_name: v.name, venue_city: v.city });
       const moreEl = e.popup.getElement()?.querySelector(".popup-more");
       if (!moreEl) return;
       moreEl.addEventListener("click", (ev) => {
@@ -1194,6 +1201,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       tab.classList.add("active");
       $(`#view-${tab.dataset.view}`).classList.add("active");
       const v = tab.dataset.view;
+      posthog.capture('tab_switched', { tab: v });
       document.querySelector("footer").classList.toggle("hidden", v === "friends");
       if (v === "schedule") renderSchedule();
       if (v === "map") loadLeaflet().then(() => setTimeout(() => { buildMap(); map.invalidateSize(); renderMarkers(); }, 60));
@@ -1208,7 +1216,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // schedule: multi-team picker
   $("#sched-team").innerHTML = TEAM_OPT("", "+ Add a team…");
   $("#sched-team").addEventListener("change", (e) => {
-    if (e.target.value) schedF.teams.add(e.target.value);
+    if (e.target.value) {
+      posthog.capture('schedule_team_filter_added', { team_name: TEAMS[e.target.value]?.name, team_code: e.target.value });
+      schedF.teams.add(e.target.value);
+    }
     e.target.value = "";
     renderSchedule();
   });
@@ -1229,6 +1240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   // clear all
   $("#sched-clear").addEventListener("click", () => {
+    posthog.capture('schedule_filters_cleared');
     schedF = { quick: "upcoming", day: null, teams: new Set(), groups: new Set(), stage: "all" };
     renderSchedule();
   });
@@ -1258,7 +1270,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       .sort((a, b) => a[1].city.localeCompare(b[1].city))
       .map(([k, v]) => `<option value="${k}">${v.city}</option>`)
       .join("");
-  $("#map-team").addEventListener("change", () => map && renderMarkers());
+  $("#map-team").addEventListener("change", () => {
+    const teamCode = $("#map-team").value;
+    if (teamCode) posthog.capture('map_team_filtered', { team_name: TEAMS[teamCode]?.name, team_code: teamCode });
+    if (map) renderMarkers();
+  });
   $("#map-city").addEventListener("change", () => map && renderMarkers());
   $("#map-clear").addEventListener("click", () => {
     $("#map-team").value = "";
@@ -1268,7 +1284,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // path
   $("#path-team").innerHTML = TEAM_OPT("USA");
-  $("#path-team").addEventListener("change", renderPath);
+  $("#path-team").addEventListener("change", () => {
+    const code = $("#path-team").value;
+    posthog.capture('path_team_selected', { team_name: TEAMS[code]?.name, team_code: code });
+    renderPath();
+  });
   $$(".scenario-toggle button").forEach((b) =>
     b.addEventListener("click", () => {
       $$(".scenario-toggle button").forEach((x) => x.classList.remove("active"));
@@ -1281,7 +1301,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // teams
   $("#teams-team").innerHTML = TEAM_OPT("", "+ Add a team…");
   $("#teams-team").addEventListener("change", (e) => {
-    if (e.target.value) { teamsF.add(e.target.value); e.target.value = ""; }
+    if (e.target.value) {
+      posthog.capture('roster_team_selected', { team_name: TEAMS[e.target.value]?.name, team_code: e.target.value });
+      teamsF.add(e.target.value);
+      e.target.value = "";
+    }
     renderTeams();
   });
   $$(".groupnav .pill").forEach((p) =>
@@ -1296,7 +1320,57 @@ document.addEventListener("DOMContentLoaded", async () => {
   // predictions + watch
   renderPredictions();
   renderWatch();
-  $("#watch-search").addEventListener("input", (e) => renderWatch(e.target.value));
+  let _watchSearchTimer;
+  $("#watch-search").addEventListener("input", (e) => {
+    renderWatch(e.target.value);
+    clearTimeout(_watchSearchTimer);
+    if (e.target.value.trim()) {
+      _watchSearchTimer = setTimeout(() => {
+        posthog.capture('where_to_watch_searched', { query: e.target.value.trim() });
+      }, 800);
+    }
+  });
+
+  // delegated: match highlights click
+  document.addEventListener("click", (e) => {
+    const ticket = e.target.closest("a.ticket.done");
+    if (!ticket) return;
+    const matchId = Number(ticket.dataset.matchid);
+    const match = ALL_GAMES.find((m) => m.id === matchId);
+    if (!match) return;
+    posthog.capture('match_highlights_clicked', {
+      home_team: TEAMS[match.home]?.name,
+      away_team: TEAMS[match.away]?.name,
+      stage: match.stage,
+    });
+  });
+
+  // delegated: match cheat-sheet preview opened
+  document.addEventListener("toggle", (e) => {
+    if (!e.target.matches("details.preview-toggle") || !e.target.open) return;
+    const matchId = Number(e.target.dataset.matchid);
+    const match = ALL_GAMES.find((m) => m.id === matchId);
+    if (!match) return;
+    posthog.capture('match_preview_opened', {
+      home_team: TEAMS[match.home]?.name,
+      away_team: TEAMS[match.away]?.name,
+      stage: match.stage,
+    });
+  }, true);
+
+  // delegated: squad link to FIFA.com
+  document.addEventListener("click", (e) => {
+    const squadLink = e.target.closest("a.squad-link");
+    if (!squadLink) return;
+    const teamName = squadLink.closest(".teamcard")?.querySelector(".tc-name")?.textContent;
+    posthog.capture('squad_link_opened', { team_name: teamName });
+  });
+
+  // delegated: supporter link in friends tab
+  document.addEventListener("click", (e) => {
+    const supportLink = e.target.closest("a[href*='buy.stripe.com']");
+    if (supportLink) posthog.capture('supporter_link_clicked');
+  });
 
   startLivePoller();
 });
