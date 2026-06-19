@@ -737,6 +737,26 @@ function renderMarkers() {
   $("#map-clear").disabled = !teamF && !cityF;
 }
 
+let _leafletReady = null;
+function loadLeaflet() {
+  if (_leafletReady) return _leafletReady;
+  _leafletReady = new Promise((resolve) => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    css.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+    css.crossOrigin = '';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    js.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+    js.crossOrigin = '';
+    js.onload = resolve;
+    document.head.appendChild(js);
+  });
+  return _leafletReady;
+}
+
 function buildMap() {
   if (map) return;
   map = L.map("map", { scrollWheelZoom: false }).setView([37.5, -96.5], 4);
@@ -1138,7 +1158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const v = tab.dataset.view;
       document.querySelector("footer").classList.toggle("hidden", v === "friends");
       if (v === "schedule") renderSchedule();
-      if (v === "map") setTimeout(() => { buildMap(); map.invalidateSize(); renderMarkers(); }, 60);
+      if (v === "map") loadLeaflet().then(() => setTimeout(() => { buildMap(); map.invalidateSize(); renderMarkers(); }, 60));
       if (v === "path") renderPath();
       if (v === "teams") renderTeams();
       if (v === "predictions") renderPredictions();
