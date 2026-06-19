@@ -618,7 +618,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 #cal-export-mobile-row { display: none; }
 @media (max-width: 819px) {
   #cal-export { display: none; }
-  #cal-export-mobile-row { display: flex; }
+  #sched-clear { display: none; }
+  #cal-export-mobile-row { display: flex; align-items: center; }
 }
 
 /* numbered venue markers */

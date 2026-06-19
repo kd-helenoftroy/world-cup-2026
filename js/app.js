@@ -629,7 +629,7 @@ function renderSchedule() {
   $$("#sched-quick .pill").forEach((p) => p.classList.toggle("active", !schedF.day && p.dataset.f === schedF.quick));
   $$("#sched-groups .pill").forEach((p) => p.classList.toggle("active", schedF.groups.has(p.dataset.g)));
   $("#sched-stage").value = schedF.stage;
-  $("#sched-clear").disabled = !filtersActive();
+  $$(".sched-clear-btn").forEach(b => b.disabled = !filtersActive());
   buildCalendar();
   buildDayTabs();
   renderTeamChips();
@@ -1237,11 +1237,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     p.addEventListener("click", () => { schedF.quick = p.dataset.f; schedF.day = null; renderSchedule(); })
   );
   // clear all
-  $("#sched-clear").addEventListener("click", () => {
+  $$(".sched-clear-btn").forEach(b => b.addEventListener("click", () => {
     posthog.capture('schedule_filters_cleared');
     schedF = { quick: "upcoming", day: null, teams: new Set(), groups: new Set(), stage: "all" };
     renderSchedule();
-  });
+  }));
   // calendar export
   $$(".cal-export-btn").forEach(b => b.addEventListener("click", downloadCalendar));
   renderSchedule();

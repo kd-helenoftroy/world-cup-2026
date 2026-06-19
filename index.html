@@ -110,7 +110,7 @@
             <button class="pill" data-g="K">K</button><button class="pill" data-g="L">L</button>
           </span>
         </div>
-        <div class="filterbar">
+        <div class="filterbar filterbar-actions">
           <label for="sched-team">Teams</label>
           <select id="sched-team" class="ctl"></select>
           <label for="sched-stage">Stage</label>
@@ -119,7 +119,7 @@
             <option value="group">Group stage</option>
             <option value="knockout">Knockout</option>
           </select>
-          <button id="sched-clear" class="clearbtn" disabled>✕ Clear filters</button>
+          <button id="sched-clear" class="clearbtn sched-clear-btn" disabled>✕ Clear filters</button>
           <button id="cal-export" class="cal-export-btn">&#128197; Export</button>
         </div>
         <div class="filterbar">
@@ -137,7 +137,8 @@
           </span>
         </div>
         <div class="filterbar" id="cal-export-mobile-row">
-          <button id="cal-export-mobile" class="cal-export-btn">&#128197; Export to calendar</button>
+          <button id="sched-clear-mobile" class="clearbtn sched-clear-btn" disabled>✕ Clear filters</button>
+          <button id="cal-export-mobile" class="cal-export-btn" style="margin-left:auto;">&#128197; Export to calendar</button>
         </div>
         <div id="day-tabs" class="day-tabs-bar"></div>
         <div id="standings-area"></div>
