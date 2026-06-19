@@ -856,7 +856,7 @@ function _playerPhotoFallback(img) {
 
 function teamCardHTML(code) {
   const t = TEAMS[code];
-  const byPos = { FW: [], MF: [], DF: [] };
+  const byPos = { FW: [], MF: [], DF: [], GK: [] };
   (ROSTERS[code] || []).forEach(([name, pos, club, age]) => {
     if (byPos[pos]) byPos[pos].push([name, pos, club, age]);
   });
@@ -880,12 +880,13 @@ function teamCardHTML(code) {
     { label: "Forwards", pos: "FW" },
     { label: "Midfielders", pos: "MF" },
     { label: "Defenders", pos: "DF" },
+    { label: "Goalkeeper", pos: "GK" },
   ];
 
-  const lineupHTML = groups.map(({ label, pos }) =>
-    `<div class="lineup-group">
-      <div class="lineup-label">${label}</div>
-      ${byPos[pos].map(playerHTML).join("")}
+  const lineupHTML = `<div class="xi-title">Starting XI</div>` + groups.map(({ label, pos }) =>
+    `<div class="xi-row">
+      <div class="xi-group-label">${label}</div>
+      <div class="xi-players">${byPos[pos].map(playerHTML).join("")}</div>
     </div>`
   ).join("");
 
@@ -901,7 +902,7 @@ function teamCardHTML(code) {
       </div>
       ${squadLink}
     </div>
-    <div class="lineup-grid">${lineupHTML}</div>
+    <div class="starting-xi">${lineupHTML}</div>
   </div>`;
 }
 
