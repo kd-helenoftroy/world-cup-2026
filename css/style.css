@@ -619,7 +619,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 @media (max-width: 819px) {
   #cal-export { display: none; }
   #sched-clear { display: none; }
-  #cal-export-mobile-row { display: flex; align-items: center; }
+  #cal-export-mobile-row { display: flex; align-items: center; margin-bottom: 18px; }
 }
 
 /* numbered venue markers */
