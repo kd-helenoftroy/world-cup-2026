@@ -883,12 +883,13 @@ function teamCardHTML(code) {
     { label: "Goalkeeper", pos: "GK" },
   ];
 
-  const lineupHTML = `<div class="xi-title">Starting XI</div>` + groups.map(({ label, pos }) =>
-    `<div class="xi-row">
-      <div class="xi-group-label">${label}</div>
-      <div class="xi-players">${byPos[pos].map(playerHTML).join("")}</div>
-    </div>`
-  ).join("");
+  const lineupHTML = `<div class="xi-title">Starting XI</div><div class="lineup-grid">` +
+    groups.map(({ label, pos }) =>
+      `<div class="lineup-group">
+        <div class="lineup-label">${label}</div>
+        ${byPos[pos].map(playerHTML).join("")}
+      </div>`
+    ).join("") + `</div>`;
 
   const squadLink = t.squad
     ? `<a class="squad-link" href="${t.squad}" target="_blank" rel="noopener">Full squad on FIFA.com →</a>`
