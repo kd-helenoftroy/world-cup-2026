@@ -540,7 +540,9 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .tc-meta b { color: var(--coral); font-weight: 600; }
 .squad-link { font-size: 12px; font-weight: 700; color: var(--pitch); text-decoration: none; white-space: nowrap; padding: 5px 10px; border: 1.5px solid var(--pitch); border-radius: 20px; transition: background 0.15s; }
 .squad-link:hover { background: var(--pitch); color: #fff; }
-.playergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-top: 14px; }
+.lineup-grid { display: flex; gap: 12px; margin-top: 14px; align-items: flex-start; }
+.lineup-group { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.lineup-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--pitch); padding-bottom: 6px; border-bottom: 2px solid var(--pitch); margin-bottom: 2px; }
 .player { display: flex; gap: 11px; align-items: center; background: var(--bg); border-radius: 12px; padding: 9px 11px; }
 .avatar {
   width: 48px; height: 48px; flex: 0 0 auto; border-radius: 50%;
@@ -553,7 +555,6 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 }
 .player .p-name { font-weight: 700; font-size: 13.5px; line-height: 1.2; }
 .player .p-sub { font-size: 11.5px; color: var(--ink-soft); font-family: "IBM Plex Mono", monospace; margin-top: 2px; }
-.player .p-sub .pos { color: var(--pitch); font-weight: 700; }
 
 /* completed games */
 .ticket.done {
@@ -680,12 +681,12 @@ footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; font-size: 12p
   .tab { padding: 12px 11px 10px; font-size: 13px; }
   .wordmark { gap: 10px; }
   .contact-btn { font-size: 13px; padding: 5px 8px; border-radius: 7px; }
-  .playergrid { grid-template-columns: 1fr 1fr; }
+  .lineup-grid { gap: 8px; }
   .player { padding: 8px 9px; gap: 8px; }
   .avatar { width: 38px; height: 38px; font-size: 13px; }
   .p-name { font-size: 12.5px; }
 }
 @media (max-width: 400px) {
-  .playergrid { grid-template-columns: 1fr; }
+  .lineup-grid { flex-direction: column; }
   .stage-tag { letter-spacing: 0.08em; }
 }

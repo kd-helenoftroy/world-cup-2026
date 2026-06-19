@@ -856,22 +856,39 @@ function _playerPhotoFallback(img) {
 
 function teamCardHTML(code) {
   const t = TEAMS[code];
-  const players = (ROSTERS[code] || [])
-    .map(([name, pos, club, age]) => {
-      const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-      const espnId = PHOTO_CACHE[name];
-      const avatarHTML = espnId
-        ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" data-initials="${initials}" onerror="_playerPhotoFallback(this)">`
-        : `<div class="avatar" aria-hidden="true">${initials}</div>`;
-      return `<div class="player">
+  const byPos = { FW: [], MF: [], DF: [] };
+  (ROSTERS[code] || []).forEach(([name, pos, club, age]) => {
+    if (byPos[pos]) byPos[pos].push([name, pos, club, age]);
+  });
+
+  function playerHTML([name, , club, age]) {
+    const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+    const espnId = PHOTO_CACHE[name];
+    const avatarHTML = espnId
+      ? `<img class="avatar" src="https://a.espncdn.com/i/headshots/soccer/players/full/${espnId}.png" alt="${name}" loading="lazy" data-initials="${initials}" onerror="_playerPhotoFallback(this)">`
+      : `<div class="avatar" aria-hidden="true">${initials}</div>`;
+    return `<div class="player">
         ${avatarHTML}
         <div>
           <div class="p-name">${name}</div>
-          <div class="p-sub"><span class="pos">${pos}</span> · ${age} yrs · ${club}</div>
+          <div class="p-sub">${age} yrs · ${club}</div>
         </div>
       </div>`;
-    })
-    .join("");
+  }
+
+  const groups = [
+    { label: "Forwards", pos: "FW" },
+    { label: "Midfielders", pos: "MF" },
+    { label: "Defenders", pos: "DF" },
+  ];
+
+  const lineupHTML = groups.map(({ label, pos }) =>
+    `<div class="lineup-group">
+      <div class="lineup-label">${label}</div>
+      ${byPos[pos].map(playerHTML).join("")}
+    </div>`
+  ).join("");
+
   const squadLink = t.squad
     ? `<a class="squad-link" href="${t.squad}" target="_blank" rel="noopener">Full squad on FIFA.com →</a>`
     : "";
@@ -884,7 +901,7 @@ function teamCardHTML(code) {
       </div>
       ${squadLink}
     </div>
-    <div class="playergrid">${players}</div>
+    <div class="lineup-grid">${lineupHTML}</div>
   </div>`;
 }
 
