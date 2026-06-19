@@ -673,7 +673,7 @@ footer { max-width: 1140px; margin: 0 auto; padding: 0 16px 40px; font-size: 12p
   .ticket { padding: 12px 12px 10px 18px; }
   .teamrow .tname { font-size: 15px; }
   .pill { padding: 6px 11px; font-size: 12px; }
-  .filterbar { gap: 7px; }
+  .filterbar { gap: 7px; margin-bottom: 8px; }
   select.ctl { max-width: 100%; }
   #calendar.calwrap { grid-template-columns: 1fr 1fr; gap: 8px; }
   .calmonth { padding: 8px 6px 6px; }
