@@ -628,7 +628,7 @@ function renderSchedule() {
   refreshModel();
   $$("#sched-quick .pill").forEach((p) => p.classList.toggle("active", !schedF.day && p.dataset.f === schedF.quick));
   $$("#sched-groups .pill").forEach((p) => p.classList.toggle("active", schedF.groups.has(p.dataset.g)));
-  $$("#sched-stage .pill").forEach((p) => p.classList.toggle("active", p.dataset.s === schedF.stage));
+  $("#sched-stage").value = schedF.stage;
   $("#sched-clear").disabled = !filtersActive();
   buildCalendar();
   buildDayTabs();
@@ -1230,10 +1230,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderSchedule();
     })
   );
-  // stage pills
-  $$("#sched-stage .pill").forEach((p) =>
-    p.addEventListener("click", () => { schedF.stage = p.dataset.s; renderSchedule(); })
-  );
+  // stage dropdown
+  $("#sched-stage").addEventListener("change", (e) => { schedF.stage = e.target.value; renderSchedule(); });
   // quick ranges
   $$("#sched-quick .pill").forEach((p) =>
     p.addEventListener("click", () => { schedF.quick = p.dataset.f; schedF.day = null; renderSchedule(); })
