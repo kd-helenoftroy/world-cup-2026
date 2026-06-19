@@ -883,7 +883,7 @@ function teamCardHTML(code) {
     { label: "Goalkeeper", pos: "GK" },
   ];
 
-  const lineupHTML = `<div class="xi-title">Starting XI</div><div class="lineup-grid">` +
+  const lineupHTML = `<div class="lineup-grid">` +
     groups.map(({ label, pos }) =>
       `<div class="lineup-group">
         <div class="lineup-label">${label}</div>
