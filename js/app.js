@@ -513,9 +513,6 @@ function gamesForFilter() {
   } else if (schedF.quick === "tomorrow") {
     const tm = new Date(now); tm.setDate(tm.getDate() + 1);
     games = games.filter((m) => dayKey(m.t) === dayKey(tm.toISOString()));
-  } else if (schedF.quick === "week") {
-    const end = new Date(now); end.setDate(end.getDate() + 7);
-    games = games.filter((m) => new Date(m.t) >= new Date(now - 6 * 36e5) && new Date(m.t) <= end);
   } else if (schedF.quick === "yesterday") {
     const yd = new Date(now); yd.setDate(yd.getDate() - 1);
     games = games.filter((m) => dayKey(m.t) === dayKey(yd.toISOString()));
