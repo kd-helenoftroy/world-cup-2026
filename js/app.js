@@ -430,9 +430,9 @@ function buildCalendar() {
             : "";
           return `<div class="cal-tip-match">` +
             `<span class="cal-tip-teams">${score}` +
-            `<img src="${FLAG(home.flag, 40)}" alt="" class="cal-tip-flag"> ${home.name}` +
+            `<img src="${FLAG(home.flag, 40)}" alt="${home.name} flag" class="cal-tip-flag"> ${home.name}` +
             ` <span class="cal-tip-vs">vs</span> ` +
-            `<img src="${FLAG(away.flag, 40)}" alt="" class="cal-tip-flag"> ${away.name}</span>` +
+            `<img src="${FLAG(away.flag, 40)}" alt="${away.name} flag" class="cal-tip-flag"> ${away.name}</span>` +
             `<span class="cal-tip-meta">${fmtTime(m.t)} · ${m.stage}</span>` +
             `</div>`;
         }).join("");
@@ -490,7 +490,7 @@ function buildDayTabs() {
 
 function renderTeamChips() {
   $("#sched-team-chips").innerHTML = [...schedF.teams]
-    .map((c) => `<span class="chip"><img src="${FLAG(TEAMS[c].flag, 40)}" alt="">${TEAMS[c].name} (#${TEAMS[c].rank})<button data-c="${c}" aria-label="Remove ${TEAMS[c].name}">✕</button></span>`)
+    .map((c) => `<span class="chip"><img src="${FLAG(TEAMS[c].flag, 40)}" alt="${TEAMS[c].name} flag">${TEAMS[c].name} (#${TEAMS[c].rank})<button data-c="${c}" aria-label="Remove ${TEAMS[c].name}">✕</button></span>`)
     .join("");
   $$("#sched-team-chips button").forEach((b) =>
     b.addEventListener("click", () => { schedF.teams.delete(b.dataset.c); renderSchedule(); })
@@ -600,7 +600,7 @@ function standingsHTML(group) {
     .map((r, i) => `
       <tr class="${i < 2 ? "qual" : i === 2 ? "maybe" : ""}">
         <td class="mono pos">${i + 1}</td>
-        <td class="teamcell"><img src="${FLAG(r.t.flag, 40)}" alt="">${r.t.name}<span class="trank">#${r.t.rank}</span></td>
+        <td class="teamcell"><img src="${FLAG(r.t.flag, 40)}" alt="${r.t.name} flag">${r.t.name}<span class="trank">#${r.t.rank}</span></td>
         <td class="mono">${r.s.p}</td><td class="mono">${r.s.w}</td><td class="mono">${r.s.d}</td><td class="mono">${r.s.l}</td>
         <td class="mono">${r.s.gf}</td><td class="mono">${r.s.ga}</td>
         <td class="mono">${r.s.gf - r.s.ga > 0 ? "+" : ""}${r.s.gf - r.s.ga}</td>
@@ -840,7 +840,7 @@ function renderPath() {
     ? ` · Elo rating ${RATINGS[code].toFixed(1)} (<span class="${delta > 0 ? "delta-up" : "delta-down"}">${delta > 0 ? "▲" : "▼"}${Math.abs(delta).toFixed(1)}</span> vs. pre-tournament)`
     : ` · Elo rating ${RATINGS[code].toFixed(1)}`;
   $("#path-summary").innerHTML =
-    `<img src="${FLAG(T.flag, 40)}" alt="" style="width:24px;vertical-align:-4px;border-radius:3px"> ` +
+    `<img src="${FLAG(T.flag, 40)}" alt="${T.name} flag" style="width:24px;vertical-align:-4px;border-radius:3px"> ` +
     `<b>${T.name}</b> — FIFA rank #${T.rank}${deltaTxt}. Three group games, then five knockout wins to the final at MetLife on July 19.`;
 }
 
@@ -916,7 +916,7 @@ function renderPredictions() {
       const rows = groupWinProbs(g)
         .map((r, i) => `
           <div class="gwrow ${i === 0 ? "leader" : ""}">
-            <img src="${FLAG(r.team.flag, 40)}" alt="">
+            <img src="${FLAG(r.team.flag, 40)}" alt="${r.team.name} flag">
             <span class="gwname">${r.team.name}</span>
             <span class="gwbar"><i style="width:${Math.round(r.p * 100)}%"></i></span>
             <span class="gwpct">${Math.round(r.p * 100)}%</span>
@@ -939,7 +939,7 @@ function renderPredictions() {
       const gd = s.gf - s.ga;
       return `<tr>
         <td class="mono" style="color:var(--ink-soft)">${i + 1}</td>
-        <td><img src="${FLAG(t.flag, 40)}" alt="" loading="lazy">${t.name}</td>
+        <td><img src="${FLAG(t.flag, 40)}" alt="${t.name} flag" loading="lazy">${t.name}</td>
         <td class="mono">#${t.rank}</td>
         <td class="mono">${RATINGS[code].toFixed(1)} ${deltaHTML}</td>
         <td class="mono">${s.pts}</td>
@@ -959,7 +959,7 @@ function renderWatch(q = "") {
     .sort((a, b) => a[1].name.localeCompare(b[1].name))
     .filter(([, t]) => t.name.toLowerCase().includes(needle))
     .map(([code, t]) => `<div class="watchcard">
-        <div class="wc-head"><img src="${FLAG(t.flag, 40)}" alt="" loading="lazy"><span class="wc-name">${t.name}</span></div>
+        <div class="wc-head"><img src="${FLAG(t.flag, 40)}" alt="${t.name} flag" loading="lazy"><span class="wc-name">${t.name}</span></div>
         <ul>${(BROADCASTERS[code] || ["Check local listings"]).map((c) => `<li>${c}</li>`).join("")}</ul>
       </div>`)
     .join("");
