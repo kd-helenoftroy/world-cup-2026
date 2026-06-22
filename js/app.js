@@ -661,6 +661,7 @@ function renderSchedule() {
    VIEW 2 — MAP
    ===================================================== */
 let map = null, markerLayer = null;
+let pathOutcomes = {}; // matchId -> 'W'|'D'|'L' from selected team's perspective
 const VENUE_COLORS = { US: "#F0A12E", MX: "#168A4E", CA: "#E4573D" };
 
 function renderMarkers() {
@@ -796,46 +797,115 @@ function pathStepHTML(label, m, opponentText, trophy = false) {
     </div>`;
 }
 
+function computeGroupProjection(code, outcomes) {
+  const g = TEAMS[code].group;
+  const groupCodes = Object.keys(TEAMS).filter((c) => TEAMS[c].group === g);
+  const S = {};
+  groupCodes.forEach((c) => { S[c] = { pts: 0, gd: 0, gf: 0 }; });
+
+  MATCHES.filter((m) => m.stage === `Group ${g}`).forEach((m) => {
+    let hg, ag;
+    if (Array.isArray(m.score)) {
+      [hg, ag] = m.score;
+    } else {
+      const isTeamMatch = m.home === code || m.away === code;
+      const o = isTeamMatch ? outcomes[m.id] : undefined;
+      const isHome = m.home === code;
+      if (o === "W") { hg = isHome ? 1 : 0; ag = isHome ? 0 : 1; }
+      else if (o === "L") { hg = isHome ? 0 : 1; ag = isHome ? 1 : 0; }
+      else { hg = 0; ag = 0; }
+    }
+    const H = S[m.home], A = S[m.away];
+    H.gf += hg; H.gd += hg - ag;
+    A.gf += ag; A.gd += ag - hg;
+    if (hg > ag) { H.pts += 3; }
+    else if (hg < ag) { A.pts += 3; }
+    else { H.pts++; A.pts++; }
+  });
+
+  return groupCodes
+    .map((c) => ({ c, ...S[c] }))
+    .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+}
+
 function renderPath() {
   refreshModel();
   const code = $("#path-team").value;
-  const scenario = $(".scenario-toggle .active").dataset.s;
   const T = TEAMS[code];
   const g = T.group;
   let html = "";
 
-  MATCHES.filter((m) => m.home === code || m.away === code).forEach((m, i) => {
+  const teamMatches = MATCHES.filter((m) => m.home === code || m.away === code);
+  const unplayed = teamMatches.filter((m) => !Array.isArray(m.score));
+
+  teamMatches.forEach((m, i) => {
     const done = Array.isArray(m.score);
+    const sel = pathOutcomes[m.id];
     html += `<div class="pathstep">
       <div class="steplabel">Group stage · match ${i + 1} of 3${done ? " · played" : ""}</div>
-      ${ticketHTML(m, { showPred: !done, showNote: false })}
+      ${ticketHTML(m, { showPred: !done && sel === undefined, showNote: false })}
+      ${!done ? `<div class="outcome-btns">
+        <span class="outcome-label">Predict:</span>
+        <button class="outcome-btn${sel === "W" ? " sel" : ""}" data-mid="${m.id}" data-o="W">Win</button>
+        <button class="outcome-btn${sel === "D" ? " sel" : ""}" data-mid="${m.id}" data-o="D">Draw</button>
+        <button class="outcome-btn${sel === "L" ? " sel" : ""}" data-mid="${m.id}" data-o="L">Loss</button>
+      </div>` : ""}
     </div>`;
   });
 
-  const slot = scenario === "win" ? `W-${g}` : `RU-${g}`;
-  const r32 = KNOCKOUTS.find((k) => k.slots && k.slots.includes(slot));
-  if (r32) {
-    const other = r32.slots.find((s) => s !== slot);
-    const oppText =
-      other === "3RD" ? r32.label.replace(/Winner \w vs /, "vs ") :
-      other.startsWith("W-") ? `vs Winner of Group ${other.slice(2)}` :
-      `vs Runner-up of Group ${other.slice(3)}`;
-    html += pathStepHTML(
-      scenario === "win" ? `If ${T.name} win Group ${g}` : `If ${T.name} finish 2nd in Group ${g}`,
-      r32, oppText
-    );
-  }
+  const proj = computeGroupProjection(code, pathOutcomes);
+  const rank = proj.findIndex((r) => r.c === code) + 1;
+  const anySelected = unplayed.some((m) => pathOutcomes[m.id]);
+  const projLabel = unplayed.length === 0
+    ? `Final Group ${g} standings`
+    : anySelected
+    ? `Projected Group ${g} standings`
+    : `Group ${g} standings (remaining games simulated as draws)`;
 
-  [["Round of 16", "Win and advance — opponent decided by the bracket"],
-   ["Quarterfinal", "Opponent decided by the bracket"],
-   ["Semifinal", "Opponent decided by the bracket"]].forEach(([stage, txt]) => {
-    const candidates = KNOCKOUTS.filter((k) => k.stage === stage);
-    const range = candidates.length > 1
-      ? `Played ${new Date(candidates[0].t).toLocaleDateString([], { month: "short", day: "numeric" })}–${new Date(candidates[candidates.length - 1].t).toLocaleDateString([], { month: "short", day: "numeric" })}`
-      : "";
-    html += pathStepHTML(range, candidates[0], txt);
-  });
-  html += pathStepHTML("The last match standing", KNOCKOUTS.find((k) => k.stage === "Final"), `${T.name} lift the trophy?`, true);
+  html += `<div class="pathstep">
+    <div class="steplabel">${projLabel}</div>
+    <div class="proj-table">
+      ${proj.map((r, idx) => `
+        <div class="proj-row${r.c === code ? " me" : ""}">
+          <span class="proj-pos">${idx + 1}</span>
+          <img src="${FLAG(TEAMS[r.c].flag, 40)}" alt="${TEAMS[r.c].name}" class="proj-flag">
+          <span class="proj-name">${TEAMS[r.c].name}</span>
+          <span class="proj-stat">${r.pts} pts</span>
+          <span class="proj-stat dim">${r.gd > 0 ? "+" : ""}${r.gd} GD</span>
+        </div>`).join("")}
+    </div>
+    ${unplayed.length > 0 ? `<p class="proj-note">Unselected matches default to draws · click Win / Draw / Loss above to explore scenarios</p>` : ""}
+  </div>`;
+
+  if (rank <= 2) {
+    const slot = rank === 1 ? `W-${g}` : `RU-${g}`;
+    const r32 = KNOCKOUTS.find((k) => k.slots && k.slots.includes(slot));
+    if (r32) {
+      const other = r32.slots.find((s) => s !== slot);
+      const oppText =
+        other === "3RD" ? r32.label.replace(/Winner \w vs /, "vs ") :
+        other.startsWith("W-") ? `vs Winner of Group ${other.slice(2)}` :
+        `vs Runner-up of Group ${other.slice(3)}`;
+      html += pathStepHTML(
+        rank === 1 ? `As Group ${g} winner` : `As Group ${g} runner-up`,
+        r32, oppText
+      );
+    }
+    [["Round of 16", "Win and advance — opponent decided by the bracket"],
+     ["Quarterfinal", "Opponent decided by the bracket"],
+     ["Semifinal", "Opponent decided by the bracket"]].forEach(([stage, txt]) => {
+      const candidates = KNOCKOUTS.filter((k) => k.stage === stage);
+      const range = candidates.length > 1
+        ? `Played ${new Date(candidates[0].t).toLocaleDateString([], { month: "short", day: "numeric" })}–${new Date(candidates[candidates.length - 1].t).toLocaleDateString([], { month: "short", day: "numeric" })}`
+        : "";
+      html += pathStepHTML(range, candidates[0], txt);
+    });
+    html += pathStepHTML("The last match standing", KNOCKOUTS.find((k) => k.stage === "Final"), `${T.name} lift the trophy?`, true);
+  } else if (rank === 3) {
+    html += `<div class="pathstep"><div class="proj-elim">3rd place — must rank among the 8 best third-place teams across all 12 groups to advance to the Round of 32.</div></div>`;
+  } else {
+    html += `<div class="pathstep"><div class="proj-elim out">4th place — eliminated at the group stage.</div></div>`;
+  }
 
   $("#path-rail").innerHTML = html;
   _injectRecaps();
@@ -1282,15 +1352,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("#path-team").addEventListener("change", () => {
     const code = $("#path-team").value;
     posthog.capture('path_team_selected', { team_name: TEAMS[code]?.name, team_code: code });
+    pathOutcomes = {};
     renderPath();
   });
-  $$(".scenario-toggle button").forEach((b) =>
-    b.addEventListener("click", () => {
-      $$(".scenario-toggle button").forEach((x) => x.classList.remove("active"));
-      b.classList.add("active");
-      renderPath();
-    })
-  );
+  $("#path-rail").addEventListener("click", (e) => {
+    const btn = e.target.closest(".outcome-btn");
+    if (!btn) return;
+    const mid = +btn.dataset.mid;
+    const o = btn.dataset.o;
+    pathOutcomes[mid] === o ? delete pathOutcomes[mid] : (pathOutcomes[mid] = o);
+    posthog.capture('path_outcome_selected', { match_id: mid, outcome: pathOutcomes[mid] ?? "cleared" });
+    renderPath();
+  });
   renderPath();
 
   // teams
