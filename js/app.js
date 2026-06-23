@@ -800,7 +800,7 @@ function pathStepHTML(label, m, opponentText, trophy = false) {
 function slotLabel(slot) {
   if (slot === "3RD") return "Best 3rd";
   if (slot.startsWith("W-")) return `Win. Grp ${slot.slice(2)}`;
-  if (slot.startsWith("RU-")) return `RU Grp ${slot.slice(3)}`;
+  if (slot.startsWith("RU-")) return `2nd Pl Grp ${slot.slice(3)}`;
   return slot;
 }
 
