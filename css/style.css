@@ -431,6 +431,15 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .outcome-btn:hover { border-color: var(--pitch); color: var(--pitch); }
 .outcome-btn.sel { background: var(--pitch); color: #fff; border-color: var(--pitch); }
 
+.other-matches { background: var(--paper); border-radius: 10px; border: 1.5px solid var(--line); overflow: hidden; margin-top: 6px; }
+.other-match { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.other-match:last-child { border-bottom: none; }
+.other-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.other-date { font-size: 11px; font-family: "IBM Plex Mono", monospace; color: var(--ink-soft); white-space: nowrap; }
+.other-teams { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; flex-wrap: wrap; }
+.other-vs { color: var(--ink-soft); font-size: 11px; font-weight: 400; }
+.other-score { font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 700; padding: 0 2px; }
+.btn-flag { width: 16px; height: 11px; object-fit: cover; border-radius: 1px; vertical-align: middle; margin-right: 4px; }
 .proj-table { background: var(--paper); border-radius: 10px; border: 1.5px solid var(--line); overflow: hidden; margin-top: 6px; }
 .proj-row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; font-size: 13px; border-bottom: 1px solid var(--line); }
 .proj-row:last-child { border-bottom: none; }

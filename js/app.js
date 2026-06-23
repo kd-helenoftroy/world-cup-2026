@@ -808,12 +808,18 @@ function computeGroupProjection(code, outcomes) {
     if (Array.isArray(m.score)) {
       [hg, ag] = m.score;
     } else {
+      const o = outcomes[m.id];
       const isTeamMatch = m.home === code || m.away === code;
-      const o = isTeamMatch ? outcomes[m.id] : undefined;
-      const isHome = m.home === code;
-      if (o === "W") { hg = isHome ? 1 : 0; ag = isHome ? 0 : 1; }
-      else if (o === "L") { hg = isHome ? 0 : 1; ag = isHome ? 1 : 0; }
-      else { hg = 0; ag = 0; }
+      if (isTeamMatch) {
+        const isHome = m.home === code;
+        if (o === "W") { hg = isHome ? 1 : 0; ag = isHome ? 0 : 1; }
+        else if (o === "L") { hg = isHome ? 0 : 1; ag = isHome ? 1 : 0; }
+        else { hg = 0; ag = 0; }
+      } else {
+        if (o === "H") { hg = 1; ag = 0; }
+        else if (o === "A") { hg = 0; ag = 1; }
+        else { hg = 0; ag = 0; }
+      }
     }
     const H = S[m.home], A = S[m.away];
     H.gf += hg; H.gd += hg - ag;
@@ -836,6 +842,8 @@ function renderPath() {
   let html = "";
 
   const teamMatches = MATCHES.filter((m) => m.home === code || m.away === code);
+  const otherMatches = MATCHES.filter((m) => m.stage === `Group ${g}` && m.home !== code && m.away !== code);
+  const allGroupUnplayed = MATCHES.filter((m) => m.stage === `Group ${g}` && !Array.isArray(m.score));
   const unplayed = teamMatches.filter((m) => !Array.isArray(m.score));
 
   teamMatches.forEach((m, i) => {
@@ -853,10 +861,38 @@ function renderPath() {
     </div>`;
   });
 
+  if (otherMatches.length > 0) {
+    html += `<div class="pathstep">
+      <div class="steplabel">Other Group ${g} matches</div>
+      <div class="other-matches">
+        ${otherMatches.map((m) => {
+          const done = Array.isArray(m.score);
+          const sel = pathOutcomes[m.id];
+          const hTeam = TEAMS[m.home], aTeam = TEAMS[m.away];
+          return `<div class="other-match">
+            <div class="other-header">
+              <span class="other-date">${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })}</span>
+              <span class="other-teams">
+                <img src="${FLAG(hTeam.flag, 40)}" alt="" class="proj-flag">${hTeam.name}
+                ${done ? `<span class="other-score">${m.score[0]}–${m.score[1]}</span>` : `<span class="other-vs">vs</span>`}
+                ${aTeam.name}<img src="${FLAG(aTeam.flag, 40)}" alt="" class="proj-flag">
+              </span>
+            </div>
+            ${!done ? `<div class="outcome-btns">
+              <button class="outcome-btn${sel === "H" ? " sel" : ""}" data-mid="${m.id}" data-o="H"><img src="${FLAG(hTeam.flag, 40)}" alt="" class="btn-flag">${hTeam.name}</button>
+              <button class="outcome-btn${sel === "D" ? " sel" : ""}" data-mid="${m.id}" data-o="D">Draw</button>
+              <button class="outcome-btn${sel === "A" ? " sel" : ""}" data-mid="${m.id}" data-o="A"><img src="${FLAG(aTeam.flag, 40)}" alt="" class="btn-flag">${aTeam.name}</button>
+            </div>` : ""}
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  }
+
   const proj = computeGroupProjection(code, pathOutcomes);
   const rank = proj.findIndex((r) => r.c === code) + 1;
-  const anySelected = unplayed.some((m) => pathOutcomes[m.id]);
-  const projLabel = unplayed.length === 0
+  const anySelected = allGroupUnplayed.some((m) => pathOutcomes[m.id]);
+  const projLabel = allGroupUnplayed.length === 0
     ? `Final Group ${g} standings`
     : anySelected
     ? `Projected Group ${g} standings`
@@ -874,7 +910,7 @@ function renderPath() {
           <span class="proj-stat dim">${r.gd > 0 ? "+" : ""}${r.gd} GD</span>
         </div>`).join("")}
     </div>
-    ${unplayed.length > 0 ? `<p class="proj-note">Unselected matches default to draws · click Win / Draw / Loss above to explore scenarios</p>` : ""}
+    ${allGroupUnplayed.length > 0 ? `<p class="proj-note">Unselected matches default to draws · toggle any match above to explore scenarios</p>` : ""}
   </div>`;
 
   if (rank <= 2) {
