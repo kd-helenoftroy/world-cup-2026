@@ -797,6 +797,144 @@ function pathStepHTML(label, m, opponentText, trophy = false) {
     </div>`;
 }
 
+function slotLabel(slot) {
+  if (slot === "3RD") return "Best 3rd";
+  if (slot.startsWith("W-")) return `Win. Grp ${slot.slice(2)}`;
+  if (slot.startsWith("RU-")) return `RU Grp ${slot.slice(3)}`;
+  return slot;
+}
+
+// Returns { w: code|null, ru: code|null } for teams that have mathematically
+// locked 1st or 2nd in the group across ALL possible remaining outcomes.
+function getDefinitiveGroupPositions(group) {
+  const teams = Object.keys(TEAMS).filter((c) => TEAMS[c].group === group);
+  const groupMatches = MATCHES.filter((m) => m.stage === `Group ${group}`);
+  const played = groupMatches.filter((m) => Array.isArray(m.score));
+  const unplayed = groupMatches.filter((m) => !Array.isArray(m.score));
+
+  const base = {};
+  teams.forEach((c) => { base[c] = { pts: 0, gd: 0, gf: 0 }; });
+  played.forEach((m) => {
+    const [hg, ag] = m.score;
+    base[m.home].gf += hg; base[m.home].gd += hg - ag;
+    base[m.away].gf += ag; base[m.away].gd += ag - hg;
+    if (hg > ag) base[m.home].pts += 3;
+    else if (hg < ag) base[m.away].pts += 3;
+    else { base[m.home].pts++; base[m.away].pts++; }
+  });
+
+  if (unplayed.length === 0) {
+    const ranked = teams.map((c) => ({ c, ...base[c] }))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+    return { w: ranked[0].c, ru: ranked[1].c };
+  }
+
+  // Enumerate all outcome permutations (max 3^6 = 729)
+  const total = Math.pow(3, unplayed.length);
+  const pos1 = new Set(), pos2 = new Set();
+  for (let i = 0; i < total; i++) {
+    const S = {};
+    teams.forEach((c) => { S[c] = { pts: base[c].pts, gd: base[c].gd, gf: base[c].gf }; });
+    let n = i;
+    for (let j = 0; j < unplayed.length; j++) {
+      const m = unplayed[j];
+      const r = n % 3; n = Math.floor(n / 3); // 0=home win, 1=draw, 2=away win
+      const hg = r === 0 ? 1 : 0, ag = r === 2 ? 1 : 0;
+      S[m.home].gf += hg; S[m.home].gd += hg - ag;
+      S[m.away].gf += ag; S[m.away].gd += ag - hg;
+      if (hg > ag) S[m.home].pts += 3;
+      else if (hg < ag) S[m.away].pts += 3;
+      else { S[m.home].pts++; S[m.away].pts++; }
+    }
+    const ranked = teams.map((c) => ({ c, ...S[c] }))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+    pos1.add(ranked[0].c);
+    pos2.add(ranked[1].c);
+  }
+  return { w: pos1.size === 1 ? [...pos1][0] : null, ru: pos2.size === 1 ? [...pos2][0] : null };
+}
+
+function resolveGroupSlot(slot, selectedCode) {
+  if (slot === "3RD") return null;
+  const type = slot.startsWith("W-") ? 0 : 1;
+  const group = slot.slice(-1);
+  const isSelectedGroup = TEAMS[selectedCode].group === group;
+
+  // For the selected team's group, apply user's W/D/L predictions
+  if (isSelectedGroup) {
+    const ranked = computeGroupProjection(selectedCode, pathOutcomes);
+    const entry = ranked[type];
+    if (!entry) return null;
+    return { code: entry.c, name: TEAMS[entry.c]?.name, flag: TEAMS[entry.c]?.flag };
+  }
+
+  // For all other groups, show whoever has mathematically locked their position
+  const pos = getDefinitiveGroupPositions(group);
+  const code = type === 0 ? pos.w : pos.ru;
+  if (!code) return null;
+  return { code, name: TEAMS[code]?.name, flag: TEAMS[code]?.flag };
+}
+
+function renderBracket(code) {
+  const stages = [
+    { label: "Round of 32", key: "Round of 32" },
+    { label: "Round of 16", key: "Round of 16" },
+    { label: "Quarterfinal", key: "Quarterfinal" },
+    { label: "Semifinal", key: "Semifinal" },
+    { label: "Final", key: "Final" },
+  ];
+
+  const slotHTML = (s, isWon, isLost) => {
+    const isSel = s.code === code;
+    const isKnown = s.code !== null && !isSel && !isWon && !isLost;
+    const cls = ["brkt-slot", isSel ? "brkt-sel" : "", isKnown ? "brkt-known" : "", isWon ? "brkt-won" : "", isLost ? "brkt-lost" : ""].filter(Boolean).join(" ");
+    return `<div class="${cls}">
+      ${s.flag ? `<img src="${FLAG(s.flag, 40)}" alt="" class="brkt-flag">` : `<span class="brkt-flag-ph"></span>`}
+      <span class="brkt-name">${s.name}</span>
+      ${s.score != null ? `<span class="brkt-score">${s.score}</span>` : ""}
+    </div>`;
+  };
+
+  const matchHTML = (m) => {
+    const done = Array.isArray(m.score);
+    let top, bot;
+    if (done) {
+      top = { code: m.home, name: TEAMS[m.home]?.name ?? "?", flag: TEAMS[m.home]?.flag, score: m.score[0] };
+      bot = { code: m.away, name: TEAMS[m.away]?.name ?? "?", flag: TEAMS[m.away]?.flag, score: m.score[1] };
+    } else if (m.slots) {
+      const r0 = resolveGroupSlot(m.slots[0], code);
+      const r1 = resolveGroupSlot(m.slots[1], code);
+      top = r0 ?? { code: null, name: slotLabel(m.slots[0]), flag: null };
+      bot = r1 ?? { code: null, name: slotLabel(m.slots[1]), flag: null };
+    } else {
+      top = { code: null, name: "TBD", flag: null };
+      bot = { code: null, name: "TBD", flag: null };
+    }
+    const topWon = done && m.score[0] > m.score[1];
+    const botWon = done && m.score[1] > m.score[0];
+    const known = top.code !== null || bot.code !== null;
+    return `<div class="brkt-match${known ? " brkt-known" : ""}">${slotHTML(top, topWon, done && !topWon)}${slotHTML(bot, botWon, done && !botWon)}</div>`;
+  };
+
+  // Build columns + connector arms between them
+  const parts = [];
+  stages.forEach(({ label, key }, i) => {
+    const matches = KNOCKOUTS.filter((k) => k.stage === key);
+    parts.push(`<div class="brkt-col">
+      <div class="brkt-round-lbl">${label}</div>
+      <div class="brkt-matches">${matches.map(matchHTML).join("")}</div>
+    </div>`);
+    // Add a connector arm between this column and the next
+    if (i < stages.length - 1) {
+      const count = matches.length; // arms = one per match
+      const arms = Array.from({ length: count }, () => `<div class="brkt-arm"></div>`).join("");
+      parts.push(`<div class="brkt-connector">${arms}</div>`);
+    }
+  });
+
+  document.getElementById("bracket").innerHTML = parts.join("");
+}
+
 function computeGroupProjection(code, outcomes) {
   const g = TEAMS[code].group;
   const groupCodes = Object.keys(TEAMS).filter((c) => TEAMS[c].group === g);
@@ -944,6 +1082,7 @@ function renderPath() {
   }
 
   $("#path-rail").innerHTML = html;
+  renderBracket(code);
   _injectRecaps();
   const delta = RATINGS[code] - T.strength;
   const deltaTxt = Math.abs(delta) >= 0.05
