@@ -162,32 +162,37 @@ const MATCHES = [
 
 /* Knockout schedule — ordered by bracket position so consecutive pairs feed the same next-round slot. */
 const KNOCKOUTS = [
-  /* ── Round of 32 ── consecutive pairs feed the same R16 slot: (1,2)→R16[GER+RSA]  (3,4)→R16[FRA+BRA]  (5,6)→R16[MEX+ENG]  (7,8)→R16[BEL+CIV]  (9,10)→R16[NED+POR]  (11,12)→R16[ESP+USA]  (13,14)→R16[AUS+COL]  (15,16)→R16[ARG+SUI] */
-  { id: 75, espnId: 760489, stage: "Round of 32", t: "2026-06-29T16:30:00-04:00", home: "GER", away: "PAR", venue: "gillette" },
+  /* ── Round of 32 ── consecutive pairs feed the same R16 slot
+     API: espn event types/2 order = R32-1(RSA)…R32-16(COL)
+     R16 pairings: (R32-1,R32-3)→760502  (R32-2,R32-5)→760503  (R32-4,R32-6)→760504
+                   (R32-7,R32-8)→760505  (R32-11,R32-12)→760506  (R32-9,R32-10)→760507
+                   (R32-13,R32-15)→760508  (R32-14,R32-16)→760509 */
   { id: 73, espnId: 760486, stage: "Round of 32", t: "2026-06-28T15:00:00-04:00", home: "RSA", away: "CAN", venue: "sofi" },
-  { id: 78, espnId: 760492, stage: "Round of 32", t: "2026-06-30T17:00:00-04:00", home: "FRA", away: "SWE", venue: "metlife" },
-  { id: 74, espnId: 760487, stage: "Round of 32", t: "2026-06-29T13:00:00-04:00", home: "BRA", away: "JPN", venue: "nrg" },
-  { id: 79, espnId: 760491, stage: "Round of 32", t: "2026-06-30T21:00:00-04:00", home: "MEX", away: "ECU", venue: "azteca" },
-  { id: 80, espnId: 760495, stage: "Round of 32", t: "2026-07-01T12:00:00-04:00", home: "ENG", away: "COD", venue: "mbs" },
-  { id: 81, espnId: 760493, stage: "Round of 32", t: "2026-07-01T16:00:00-04:00", home: "BEL", away: "SEN", venue: "lumen" },
-  { id: 77, espnId: 760490, stage: "Round of 32", t: "2026-06-30T13:00:00-04:00", home: "CIV", away: "NOR", venue: "att" },
   { id: 76, espnId: 760488, stage: "Round of 32", t: "2026-06-29T21:00:00-04:00", home: "NED", away: "MAR", venue: "bbva" },
+  { id: 74, espnId: 760487, stage: "Round of 32", t: "2026-06-29T13:00:00-04:00", home: "BRA", away: "JPN", venue: "nrg" },
+  { id: 77, espnId: 760490, stage: "Round of 32", t: "2026-06-30T13:00:00-04:00", home: "CIV", away: "NOR", venue: "att" },
+  { id: 75, espnId: 760489, stage: "Round of 32", t: "2026-06-29T16:30:00-04:00", home: "GER", away: "PAR", venue: "gillette" },
+  { id: 79, espnId: 760491, stage: "Round of 32", t: "2026-06-30T21:00:00-04:00", home: "MEX", away: "ECU", venue: "azteca" },
+  { id: 78, espnId: 760492, stage: "Round of 32", t: "2026-06-30T17:00:00-04:00", home: "FRA", away: "SWE", venue: "metlife" },
+  { id: 81, espnId: 760493, stage: "Round of 32", t: "2026-07-01T16:00:00-04:00", home: "BEL", away: "SEN", venue: "lumen" },
   { id: 84, espnId: 760496, stage: "Round of 32", t: "2026-07-02T19:00:00-04:00", home: "POR", away: "CRO", venue: "bmo" },
   { id: 83, espnId: 760497, stage: "Round of 32", t: "2026-07-02T15:00:00-04:00", home: "ESP", away: "AUT", venue: "sofi" },
   { id: 82, espnId: 760494, stage: "Round of 32", t: "2026-07-01T20:00:00-04:00", home: "USA", away: "BIH", venue: "levis" },
+  { id: 80, espnId: 760495, stage: "Round of 32", t: "2026-07-01T12:00:00-04:00", home: "ENG", away: "COD", venue: "mbs" },
+  { id: 85, espnId: 760498, stage: "Round of 32", t: "2026-07-02T23:00:00-04:00", home: "SUI", away: "ALG", venue: "bcplace" },
+  { id: 87, espnId: 760500, stage: "Round of 32", t: "2026-07-03T18:00:00-04:00", home: "ARG", away: "CPV", venue: "hardrock" },
   { id: 86, espnId: 760499, stage: "Round of 32", t: "2026-07-03T14:00:00-04:00", home: "AUS", away: "EGY", venue: "att" },
   { id: 88, espnId: 760501, stage: "Round of 32", t: "2026-07-03T21:30:00-04:00", home: "COL", away: "GHA", venue: "arrowhead" },
-  { id: 87, espnId: 760500, stage: "Round of 32", t: "2026-07-03T18:00:00-04:00", home: "ARG", away: "CPV", venue: "hardrock" },
-  { id: 85, espnId: 760498, stage: "Round of 32", t: "2026-07-02T23:00:00-04:00", home: "SUI", away: "ALG", venue: "bcplace" },
-  /* ── Round of 16 ── bracket order: (A,B)→QF-1  (E,F)→QF-2  (C,D)→QF-3  (G,H)→QF-4 */
+  /* ── Round of 16 ── consecutive pairs feed the same QF:
+     (760502,760503)→QF-760510  (760506,760507)→QF-760511  (760504,760505)→QF-760512  (760508,760509)→QF-760513 */
   { id: 89, espnId: 760502, stage: "Round of 16", t: "2026-07-04T13:00:00-04:00", venue: "nrg" },
   { id: 90, espnId: 760503, stage: "Round of 16", t: "2026-07-04T17:00:00-04:00", venue: "lincoln" },
   { id: 93, espnId: 760506, stage: "Round of 16", t: "2026-07-06T15:00:00-04:00", venue: "att" },
   { id: 94, espnId: 760507, stage: "Round of 16", t: "2026-07-06T20:00:00-04:00", venue: "lumen" },
   { id: 91, espnId: 760504, stage: "Round of 16", t: "2026-07-05T16:00:00-04:00", venue: "metlife" },
   { id: 92, espnId: 760505, stage: "Round of 16", t: "2026-07-05T20:00:00-04:00", venue: "azteca" },
-  { id: 95, espnId: 760509, stage: "Round of 16", t: "2026-07-07T12:00:00-04:00", venue: "mbs" },
   { id: 96, espnId: 760508, stage: "Round of 16", t: "2026-07-07T16:00:00-04:00", venue: "bcplace" },
+  { id: 95, espnId: 760509, stage: "Round of 16", t: "2026-07-07T12:00:00-04:00", venue: "mbs" },
   /* ── Quarterfinals ── bracket order: (QF-1,QF-2)→SF-1  (QF-3,QF-4)→SF-2 */
   { id: 97, espnId: 760510, stage: "Quarterfinal", t: "2026-07-09T16:00:00-04:00", venue: "gillette" },
   { id: 98, espnId: 760511, stage: "Quarterfinal", t: "2026-07-10T15:00:00-04:00", venue: "sofi" },
