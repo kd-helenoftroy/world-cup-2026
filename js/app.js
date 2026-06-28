@@ -99,13 +99,14 @@ function lastResultPhrase(code) {
 
 /* One-line context for each game, generated from live standings. */
 function matchNote(m) {
-  if (!m.home) {
+  if (!m.stage?.startsWith("Group")) {
     if (m.stage === "Final") return `<b>One match for the trophy.</b> 90 minutes, extra time if needed, then penalties — at MetLife in front of 82,500.`;
     if (m.stage === "Round of 32") return `<b>Knockout football begins.</b> Win or go home — top two from each group plus the eight best third-place teams made it here.`;
     return `<b>Single elimination.</b> Win or go home: extra time, then penalties if level.`;
   }
   const g = m.stage.slice(-1);
   const a = STANDINGS[m.home], b = STANDINGS[m.away];
+  if (!a || !b) return "";
 
   if (a.p === 0 && b.p === 0)
     return `<b>Matchday 1 in Group ${g}.</b> First points up for grabs — top two advance, and a strong third place can sneak through too.`;
@@ -273,24 +274,24 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   else if (live) statusChip = `<span class="soon">● LIVE${m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
   else if (relDay(m.t) === "Today") statusChip = `<span class="soon">TODAY</span>`;
 
+  const teamRowHTML = (code, score, scClass) => {
+    const T = TEAMS[code];
+    if (!T) return `<div class="teamrow tbd"><span class="tname">TBD</span></div>`;
+    return `<div class="teamrow">
+      <img src="${FLAG(T.flag)}" alt="${T.name} flag" loading="lazy">
+      <span class="tname">${T.name}</span><span class="trank">#${T.rank}</span>
+      ${score != null ? `<span class="${scClass}">${score}</span>` : ""}
+    </div>`;
+  };
+
   let teamsHTML;
-  if (isKO) {
+  if (isKO && !m.away) {
+    // Completely unresolved knockout slot
     teamsHTML = `<div class="teamrow tbd"><span class="tname">${m.label}</span></div>`;
   } else {
-    const H = TEAMS[m.home], A = TEAMS[m.away];
     const sc = done ? m.score : liveSnap ? m.liveScore : null;
     const scClass = liveSnap && !done ? "tscore livesc" : "tscore";
-    teamsHTML = `
-      <div class="teamrow">
-        <img src="${FLAG(H.flag)}" alt="${H.name} flag" loading="lazy">
-        <span class="tname">${H.name}</span><span class="trank">#${H.rank}</span>
-        ${sc ? `<span class="${scClass}">${sc[0]}</span>` : ""}
-      </div>
-      <div class="teamrow">
-        <img src="${FLAG(A.flag)}" alt="${A.name} flag" loading="lazy">
-        <span class="tname">${A.name}</span><span class="trank">#${A.rank}</span>
-        ${sc ? `<span class="${scClass}">${sc[1]}</span>` : ""}
-      </div>`;
+    teamsHTML = teamRowHTML(m.home, sc?.[0], scClass) + teamRowHTML(m.away, sc?.[1], scClass);
   }
 
   const localT = fmtTime(m.t);
@@ -303,7 +304,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   }
 
   let predHTML = "";
-  if (showPred && !isKO && !done) {
+  if (showPred && m.home && m.away && !done) {
     const p = winProbs(m.home, m.away);
     predHTML = `
       <div class="predbar" title="Win probability estimate (live model)">
@@ -316,7 +317,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
       </div>`;
   }
 
-  const preview = !done && !isKO && PREVIEW_CACHE.get(m.id);
+  const preview = !done && m.home && m.away && PREVIEW_CACHE.get(m.id);
   const noteHTML = showNote
     ? preview
       ? `<div class="matchnote">${matchNote(m)}</div>
@@ -647,7 +648,7 @@ function renderSchedule() {
     .join("");
 
   if (!out && schedF.teams.size && schedF.stage !== "group") {
-    out = `<div class="empty-day">No scheduled matches for this filter yet — knockout opponents aren't set until the group stage wraps on June 27. Check the <b>Path to the Trophy</b> tab for projected routes.</div>`;
+    out = `<div class="empty-day">No matches found for this filter. Try a different team or date range.</div>`;
   }
   $("#schedule-list").innerHTML = out || `<div class="empty-day">No matches in this window — click a highlighted day on the calendar, or hit ✕ Clear filters.</div>`;
   _injectRecaps();
@@ -901,6 +902,10 @@ function renderBracket(code) {
     if (done) {
       top = { code: m.home, name: TEAMS[m.home]?.name ?? "?", flag: TEAMS[m.home]?.flag, score: m.score[0] };
       bot = { code: m.away, name: TEAMS[m.away]?.name ?? "?", flag: TEAMS[m.away]?.flag, score: m.score[1] };
+    } else if (m.home && m.away) {
+      // Teams confirmed by ESPN (match not yet played)
+      top = { code: m.home, name: TEAMS[m.home]?.name ?? "?", flag: TEAMS[m.home]?.flag };
+      bot = { code: m.away, name: TEAMS[m.away]?.name ?? "?", flag: TEAMS[m.away]?.flag };
     } else if (m.slots) {
       const r0 = resolveGroupSlot(m.slots[0], code);
       const r1 = resolveGroupSlot(m.slots[1], code);
@@ -1288,15 +1293,13 @@ function _buildNameMap() {
 
 function _activeDates() {
   const now = Date.now();
-  const pending = MATCHES.filter(
-    (m) => !Array.isArray(m.score) && Math.abs(new Date(m.t).getTime() - now) < ACTIVE_WINDOW
-  );
-  if (!pending.length) return [];
   const etFmt = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
   });
   const dates = new Set();
-  for (const m of pending) {
+  for (const m of [...MATCHES, ...KNOCKOUTS]) {
+    if (Array.isArray(m.score)) continue;
+    if (Math.abs(new Date(m.t).getTime() - now) >= ACTIVE_WINDOW) continue;
     const d = new Date(m.t);
     dates.add(d.toISOString().slice(0, 10).replace(/-/g, ""));
     dates.add(etFmt.format(d).replace(/-/g, ""));
@@ -1323,11 +1326,17 @@ function _applyESPNEvents(events, nameMap) {
       nameMap[_stripName(c.team?.name || "")];
     const hCode = codeOf(home), aCode = codeOf(away);
     if (!hCode || !aCode) continue;
-    const match = MATCHES.find(
+    const evDate = new Date(ev.date || comp.date);
+    let match = MATCHES.find(
       (m) =>
         ((m.home === hCode && m.away === aCode) || (m.home === aCode && m.away === hCode)) &&
-        Math.abs(new Date(m.t) - new Date(ev.date || comp.date)) < 36 * 3600 * 1000
+        Math.abs(new Date(m.t) - evDate) < 36 * 3600 * 1000
     );
+    // For knockout matches: match by kickoff time and assign teams if not yet set
+    if (!match) {
+      match = KNOCKOUTS.find((m) => !Array.isArray(m.score) && Math.abs(new Date(m.t) - evDate) < 2 * 3600 * 1000);
+      if (match && !match.home) { match.home = hCode; match.away = aCode; changed = true; }
+    }
     if (!match) continue;
     const hg = parseInt(home.score, 10), ag = parseInt(away.score, 10);
     if (Number.isNaN(hg) || Number.isNaN(ag)) continue;
@@ -1383,6 +1392,7 @@ function startLivePoller() {
     if (changed) {
       refreshModel();
       if ($("#view-schedule.active")) renderSchedule();
+      if ($("#view-path.active")) renderPath();
       if ($("#view-predictions.active")) renderPredictions();
     }
     if (_activeDates().length) setTimeout(tick, POLL_MS);
@@ -1402,10 +1412,10 @@ async function loadLiveScores() {
     timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
   });
   const dates = new Set();
-  for (const m of MATCHES) {
-    if (Array.isArray(m.score)) continue; // already hardcoded in data.js
+  for (const m of [...MATCHES, ...KNOCKOUTS]) {
+    if (Array.isArray(m.score)) continue;
     const kickoff = new Date(m.t).getTime();
-    if (kickoff > now + ACTIVE_WINDOW) continue; // future match
+    if (kickoff > now + ACTIVE_WINDOW) continue;
     const d = new Date(m.t);
     dates.add(d.toISOString().slice(0, 10).replace(/-/g, ""));
     dates.add(etFmt.format(d).replace(/-/g, ""));
@@ -1420,8 +1430,27 @@ async function loadLiveScores() {
   }));
 }
 
+// Once group stage data is loaded, populate home/away on knockout matches
+// whose slots are definitively resolved (W-X and RU-X only; 3RD handled by ESPN).
+function resolveKnockoutTeams() {
+  for (const m of KNOCKOUTS) {
+    if (m.home || !m.slots) continue;
+    const [s0, s1] = m.slots;
+    const resolve = (slot) => {
+      if (!slot.startsWith("W-") && !slot.startsWith("RU-")) return null;
+      const pos = getDefinitiveGroupPositions(slot.slice(-1));
+      return slot.startsWith("W-") ? pos.w : pos.ru;
+    };
+    const h = resolve(s0), a = resolve(s1);
+    if (h && a) { m.home = h; m.away = a; }
+    else if (h && s1 === "3RD") { m.home = h; }   // partial: group winner known, 3rd TBD
+    else if (a && s0 === "3RD") { m.away = a; }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson(), loadPlayerPhotos()]);
+  resolveKnockoutTeams();
   refreshModel();
 
   // mark current tournament stage in the funnel
