@@ -485,6 +485,18 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .brkt-slot.brkt-sel .brkt-name { color: var(--pitch); font-weight: 700; }
 .brkt-slot.brkt-won .brkt-name { color: var(--ink); font-weight: 700; }
 .brkt-slot.brkt-lost { opacity: 0.4; }
+.brkt-match { cursor: default; }
+
+#brkt-tooltip {
+  position: fixed; z-index: 300; pointer-events: none; display: none;
+  background: var(--ink); color: #fff;
+  border-radius: 9px; padding: 9px 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  line-height: 1.5; max-width: 220px;
+}
+.btt-date { font-size: 12px; font-weight: 700; }
+.btt-time { font-size: 12px; }
+.btt-venue { font-size: 11px; opacity: 0.75; margin-top: 3px; }
 
 /* connector arm between adjacent round columns */
 .brkt-connector { width: 16px; display: flex; flex-direction: column; justify-content: space-around; height: 1040px; flex-shrink: 0; }

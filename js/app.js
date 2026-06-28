@@ -922,7 +922,7 @@ function renderBracket(code) {
     const topWon = done && m.score[0] > m.score[1];
     const botWon = done && m.score[1] > m.score[0];
     const known = top.code !== null || bot.code !== null;
-    return `<div class="brkt-match${known ? " brkt-known" : ""}">${slotHTML(top, topWon, done && !topWon)}${slotHTML(bot, botWon, done && !botWon)}</div>`;
+    return `<div class="brkt-match${known ? " brkt-known" : ""}" data-t="${m.t}" data-venue="${m.venue ?? ""}">${slotHTML(top, topWon, done && !topWon)}${slotHTML(bot, botWon, done && !botWon)}</div>`;
   };
 
   const fmtISO = (s) => {
@@ -1570,6 +1570,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btn = $("#bracket-focus-btn");
     const focused = layout.classList.toggle("bracket-focus");
     btn.textContent = focused ? "↙ Show Path Cards" : "Full Bracket ↗";
+  });
+
+  // bracket match hover tooltip
+  const brktTip = document.createElement("div");
+  brktTip.id = "brkt-tooltip";
+  document.body.appendChild(brktTip);
+  let _tipTarget = null;
+  document.getElementById("bracket").addEventListener("mouseover", (e) => {
+    const card = e.target.closest(".brkt-match");
+    if (card === _tipTarget) return;
+    _tipTarget = card;
+    if (!card || !card.dataset.t) { brktTip.style.display = "none"; return; }
+    const d = new Date(card.dataset.t);
+    const venueKey = card.dataset.venue;
+    const venue = VENUES[venueKey];
+    const dateStr = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    const timeStr = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const venueStr = venue ? `${venue.name}, ${venue.city}` : "";
+    brktTip.innerHTML = `<div class="btt-date">${dateStr}</div><div class="btt-time">${timeStr}</div>${venueStr ? `<div class="btt-venue">${venueStr}</div>` : ""}`;
+    brktTip.style.display = "block";
+  });
+  document.getElementById("bracket").addEventListener("mousemove", (e) => {
+    if (brktTip.style.display !== "block") return;
+    const x = e.clientX + 16, y = e.clientY - 12;
+    const tw = brktTip.offsetWidth, th = brktTip.offsetHeight;
+    brktTip.style.left = (x + tw > window.innerWidth ? e.clientX - tw - 10 : x) + "px";
+    brktTip.style.top  = (y + th > window.innerHeight ? e.clientY - th - 10 : y) + "px";
+  });
+  document.getElementById("bracket").addEventListener("mouseleave", () => {
+    brktTip.style.display = "none";
+    _tipTarget = null;
   });
 
   // path
