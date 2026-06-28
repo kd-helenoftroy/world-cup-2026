@@ -428,6 +428,29 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .path-layout { display: flex; gap: 28px; align-items: flex-start; }
 #path-rail { flex: 0 0 auto; }
 
+/* ---------- bracket-focus mode (path rail minimized) ---------- */
+.path-layout.bracket-focus { flex-direction: column; gap: 16px; }
+.path-layout.bracket-focus #bracket-panel { width: 100%; display: block !important; }
+.path-layout.bracket-focus #path-rail {
+  display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px;
+  padding-left: 0; margin-top: 0; width: 100%;
+}
+.path-layout.bracket-focus #path-rail::before { display: none; }
+.path-layout.bracket-focus .pathstep { max-width: none; margin-bottom: 0; padding-left: 0; }
+.path-layout.bracket-focus .pathstep::before { display: none; }
+.path-layout.bracket-focus .ticket,
+.path-layout.bracket-focus .outcome-btns,
+.path-layout.bracket-focus .other-matches,
+.path-layout.bracket-focus .proj-table,
+.path-layout.bracket-focus .proj-note,
+.path-layout.bracket-focus .proj-elim { display: none; }
+.path-layout.bracket-focus .steplabel {
+  font-size: 11px; font-weight: 700; background: var(--paper);
+  border: 1.5px solid var(--line); border-radius: 20px;
+  padding: 5px 10px; white-space: nowrap; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.05em; margin: 0;
+}
+
 /* ---------- bracket panel ---------- */
 #bracket-panel { flex: 1; min-width: 0; overflow-x: auto; padding: 14px 16px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
 .brkt-title { font-family: "Anton", sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); margin-bottom: 12px; }

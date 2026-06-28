@@ -1555,6 +1555,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (map) { renderMarkers(); map.flyTo([37.5, -96.5], 4); }
   });
 
+  // path — bracket-focus toggle
+  $("#bracket-focus-btn").addEventListener("click", () => {
+    const layout = $(".path-layout");
+    const btn = $("#bracket-focus-btn");
+    const focused = layout.classList.toggle("bracket-focus");
+    btn.textContent = focused ? "↙ Show Path Cards" : "Full Bracket ↗";
+  });
+
   // path
   $("#path-team").innerHTML = TEAM_OPT("USA");
   $("#path-team").addEventListener("change", () => {
