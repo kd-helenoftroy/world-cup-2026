@@ -274,9 +274,9 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   else if (live) statusChip = `<span class="soon">● LIVE${m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
   else if (relDay(m.t) === "Today") statusChip = `<span class="soon">TODAY</span>`;
 
-  const teamRowHTML = (code, score, scClass) => {
+  const teamRowHTML = (code, fallback, score, scClass) => {
     const T = TEAMS[code];
-    if (!T) return `<div class="teamrow tbd"><span class="tname">TBD</span></div>`;
+    if (!T) return `<div class="teamrow tbd"><span class="tname">${fallback}</span></div>`;
     return `<div class="teamrow">
       <img src="${FLAG(T.flag)}" alt="${T.name} flag" loading="lazy">
       <span class="tname">${T.name}</span><span class="trank">#${T.rank}</span>
@@ -286,12 +286,15 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
 
   let teamsHTML;
   if (isKO && !m.away) {
-    // Completely unresolved knockout slot
+    // Completely unresolved — no home known either
     teamsHTML = `<div class="teamrow tbd"><span class="tname">${m.label}</span></div>`;
   } else {
     const sc = done ? m.score : liveSnap ? m.liveScore : null;
     const scClass = liveSnap && !done ? "tscore livesc" : "tscore";
-    teamsHTML = teamRowHTML(m.home, sc?.[0], scClass) + teamRowHTML(m.away, sc?.[1], scClass);
+    const hLabel = m.slots?.[0] ? slotLabel(m.slots[0]) : "TBD";
+    const aLabel = m.slots?.[1] ? slotLabel(m.slots[1]) : "TBD";
+    teamsHTML = teamRowHTML(m.home, hLabel, sc?.[0], scClass) +
+                teamRowHTML(m.away, aLabel, sc?.[1], scClass);
   }
 
   const localT = fmtTime(m.t);
