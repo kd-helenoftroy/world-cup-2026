@@ -912,8 +912,9 @@ function renderBracket(code) {
       top = r0 ?? { code: null, name: slotLabel(m.slots[0]), flag: null };
       bot = r1 ?? { code: null, name: slotLabel(m.slots[1]), flag: null };
     } else {
-      top = { code: null, name: "TBD", flag: null };
-      bot = { code: null, name: "TBD", flag: null };
+      const prevRound = { "Round of 16": "Win. R32", "Quarterfinal": "Win. R16", "Semifinal": "Win. QF", "Final": "Win. SF" }[m.stage] ?? "TBD";
+      top = { code: null, name: prevRound, flag: null };
+      bot = { code: null, name: prevRound, flag: null };
     }
     const topWon = done && m.score[0] > m.score[1];
     const botWon = done && m.score[1] > m.score[0];
