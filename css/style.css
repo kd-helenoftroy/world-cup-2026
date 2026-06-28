@@ -213,7 +213,6 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 @media (min-width: 820px) {
   .tagline { white-space: nowrap; max-width: none; }
   .section-note { white-space: nowrap; max-width: none; }
-  #view-path .section-note { white-space: normal; max-width: 72ch; }
   .sched-layout {
     display: grid;
     grid-template-columns: 1fr 3fr;
