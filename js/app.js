@@ -925,12 +925,21 @@ function renderBracket(code) {
     return `<div class="brkt-match${known ? " brkt-known" : ""}">${slotHTML(top, topWon, done && !topWon)}${slotHTML(bot, botWon, done && !botWon)}</div>`;
   };
 
+  const fmtISO = (s) => {
+    const [, mo, d] = s.slice(0, 10).split("-");
+    return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+mo - 1] + " " + +d;
+  };
+
   // Build columns + connector arms between them
   const parts = [];
   stages.forEach(({ label, key }, i) => {
     const matches = KNOCKOUTS.filter((k) => k.stage === key);
+    const dates = matches.map((m) => m.t.slice(0, 10)).sort();
+    const dateRange = dates[0] === dates[dates.length - 1]
+      ? fmtISO(dates[0])
+      : `${fmtISO(dates[0])} – ${fmtISO(dates[dates.length - 1])}`;
     parts.push(`<div class="brkt-col">
-      <div class="brkt-round-lbl">${label}</div>
+      <div class="brkt-round-lbl">${label}<span class="brkt-date-range">${dateRange}</span></div>
       <div class="brkt-matches">${matches.map(matchHTML).join("")}</div>
     </div>`);
     // Add a connector arm between this column and the next

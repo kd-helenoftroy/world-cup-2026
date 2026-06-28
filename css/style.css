@@ -468,7 +468,8 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .brkt-title { font-family: "Anton", sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); margin-bottom: 12px; }
 #bracket { display: flex; gap: 0; align-items: flex-start; }
 .brkt-col { flex: 0 0 auto; display: flex; flex-direction: column; }
-.brkt-round-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); text-align: center; padding-bottom: 8px; white-space: nowrap; }
+.brkt-round-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); text-align: center; padding-bottom: 8px; white-space: nowrap; display: flex; flex-direction: column; gap: 2px; }
+.brkt-date-range { font-size: 10px; font-weight: 500; text-transform: none; letter-spacing: 0.01em; color: var(--ink-soft); opacity: 0.7; }
 .brkt-matches { display: flex; flex-direction: column; justify-content: space-around; height: 1040px; }
 .brkt-match { border: 1.5px solid var(--line); border-radius: 7px; overflow: hidden; width: 128px; background: #fff; }
 .brkt-match.brkt-known { border-color: rgba(10, 132, 255, 0.22); }
