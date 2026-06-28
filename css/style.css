@@ -450,6 +450,18 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
   padding: 5px 10px; white-space: nowrap; color: var(--ink-soft);
   text-transform: uppercase; letter-spacing: 0.05em; margin: 0;
 }
+.path-layout.bracket-focus #bracket { width: 100%; }
+.path-layout.bracket-focus .brkt-col { flex: 1; min-width: 0; }
+.path-layout.bracket-focus .brkt-match { width: 100%; box-sizing: border-box; }
+.path-layout.bracket-focus .brkt-matches,
+.path-layout.bracket-focus .brkt-connector { height: 1400px; }
+.path-layout.bracket-focus .brkt-slot { font-size: 14px; min-height: 32px; padding: 7px 10px; gap: 8px; }
+.path-layout.bracket-focus .brkt-flag { width: 22px; height: 15px; }
+.path-layout.bracket-focus .brkt-flag-ph { width: 22px; }
+.path-layout.bracket-focus .brkt-name { font-size: 14px; }
+.path-layout.bracket-focus .brkt-score { font-size: 13px; }
+.path-layout.bracket-focus .brkt-round-lbl { font-size: 13px; padding-bottom: 10px; }
+.path-layout.bracket-focus .brkt-connector { width: 24px; flex: 0 0 24px; }
 
 /* ---------- bracket panel ---------- */
 #bracket-panel { flex: 1; min-width: 0; overflow-x: auto; padding: 14px 16px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
