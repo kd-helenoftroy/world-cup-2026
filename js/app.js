@@ -286,8 +286,9 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
 
   let teamsHTML;
   if (isKO && !m.away) {
-    // Completely unresolved — no home known either
-    teamsHTML = `<div class="teamrow tbd"><span class="tname">${m.label}</span></div>`;
+    const [hLabel, aLabel] = koTeamLabels(m);
+    teamsHTML = `<div class="teamrow tbd"><span class="tname">${hLabel}</span></div>` +
+      (aLabel ? `<div class="teamrow tbd"><span class="tname">${aLabel}</span></div>` : "");
   } else {
     const sc = done ? m.score : liveSnap ? m.liveScore : null;
     const scClass = liveSnap && !done ? "tscore livesc" : "tscore";
@@ -806,6 +807,37 @@ function slotLabel(slot) {
   if (slot.startsWith("W-")) return `Win. Grp ${slot.slice(2)}`;
   if (slot.startsWith("RU-")) return `2nd Pl Grp ${slot.slice(3)}`;
   return slot;
+}
+
+// Returns [homeLabel, awayLabel] for unresolved knockout matches
+function koTeamLabels(m) {
+  const r32 = KNOCKOUTS.filter(k => k.stage === "Round of 32");
+  const r16 = KNOCKOUTS.filter(k => k.stage === "Round of 16");
+  const qf  = KNOCKOUTS.filter(k => k.stage === "Quarterfinal");
+  const tname = c => TEAMS[c]?.name ?? c;
+
+  if (m.stage === "Round of 16") {
+    const i = r16.indexOf(m);
+    const m1 = r32[i * 2], m2 = r32[i * 2 + 1];
+    return [
+      m1 ? `Winner: ${tname(m1.home)} vs ${tname(m1.away)}` : "TBD",
+      m2 ? `Winner: ${tname(m2.home)} vs ${tname(m2.away)}` : "TBD",
+    ];
+  }
+  if (m.stage === "Quarterfinal") {
+    const i = qf.indexOf(m);
+    const r16m1 = r16[i * 2], r16m2 = r16[i * 2 + 1];
+    const r16Label = (r16m) => {
+      if (!r16m) return "TBD";
+      if (r16m.home) return `${tname(r16m.home)} or ${tname(r16m.away)} (R16)`;
+      const j = r16.indexOf(r16m);
+      const ra = r32[j * 2], rb = r32[j * 2 + 1];
+      if (!ra || !rb) return "R16 winner";
+      return `R16: W(${ra.home}/${ra.away}) vs W(${rb.home}/${rb.away})`;
+    };
+    return [r16Label(r16m1), r16Label(r16m2)];
+  }
+  return [m.label ?? "TBD", null];
 }
 
 // Returns { w: code|null, ru: code|null } for teams that have mathematically
