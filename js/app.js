@@ -1106,9 +1106,20 @@ function renderPath() {
   const deltaTxt = Math.abs(delta) >= 0.05
     ? ` · Elo rating ${RATINGS[code].toFixed(1)} (<span class="${delta > 0 ? "delta-up" : "delta-down"}">${delta > 0 ? "▲" : "▼"}${Math.abs(delta).toFixed(1)}</span> vs. pre-tournament)`
     : ` · Elo rating ${RATINGS[code].toFixed(1)}`;
+  const koLoss = KNOCKOUTS.find(k =>
+    Array.isArray(k.score) &&
+    ((k.home === code && k.score[0] < k.score[1]) ||
+     (k.away === code && k.score[1] < k.score[0]))
+  );
+  const eliminatedGroup = allGroupUnplayed.length === 0 && rank === 4;
+  const summaryTail = koLoss
+    ? `Eliminated in the ${koLoss.stage}.`
+    : eliminatedGroup
+    ? `Eliminated at the group stage — finished 4th in Group ${g}.`
+    : `Three group games, then five knockout wins to the final at MetLife on July 19.`;
   $("#path-summary").innerHTML =
     `<img src="${FLAG(T.flag, 40)}" alt="${T.name} flag" style="width:24px;vertical-align:-4px;border-radius:3px"> ` +
-    `<b>${T.name}</b> — FIFA rank #${T.rank}${deltaTxt}. Three group games, then five knockout wins to the final at MetLife on July 19.`;
+    `<b>${T.name}</b> — FIFA rank #${T.rank}${deltaTxt}. ${summaryTail}`;
 }
 
 /* =====================================================
