@@ -953,10 +953,13 @@ function renderBracket(code) {
     if (done) {
       top = { code: m.home, name: TEAMS[m.home]?.name ?? "?", flag: TEAMS[m.home]?.flag, score: m.score[0] };
       bot = { code: m.away, name: TEAMS[m.away]?.name ?? "?", flag: TEAMS[m.away]?.flag, score: m.score[1] };
-    } else if (m.home && m.away) {
-      // Teams confirmed by ESPN (match not yet played)
-      top = { code: m.home, name: TEAMS[m.home]?.name ?? "?", flag: TEAMS[m.home]?.flag };
-      bot = { code: m.away, name: TEAMS[m.away]?.name ?? "?", flag: TEAMS[m.away]?.flag };
+    } else if (m.home || m.away) {
+      const prevRound = { "Round of 16": "Win. R32", "Quarterfinal": "Win. R16", "Semifinal": "Win. QF", "Final": "Win. SF" }[m.stage] ?? "TBD";
+      const teamSlot = (c) => c
+        ? { code: c, name: TEAMS[c]?.name ?? "?", flag: TEAMS[c]?.flag }
+        : { code: null, name: prevRound, flag: null };
+      top = teamSlot(m.home);
+      bot = teamSlot(m.away);
     } else if (m.slots) {
       const r0 = resolveGroupSlot(m.slots[0], code);
       const r1 = resolveGroupSlot(m.slots[1], code);
