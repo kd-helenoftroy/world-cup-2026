@@ -842,11 +842,14 @@ function koTeamLabels(m) {
     const r16m1 = r16[i * 2], r16m2 = r16[i * 2 + 1];
     const r16Label = (r16m) => {
       if (!r16m) return "TBD";
-      if (r16m.home) return `${tname(r16m.home)} or ${tname(r16m.away)} (R16)`;
+      if (r16m.home && r16m.away) return `${tname(r16m.home)} or ${tname(r16m.away)} (R16)`;
       const j = r16.indexOf(r16m);
       const ra = r32[j * 2], rb = r32[j * 2 + 1];
       if (!ra || !rb) return "R16 winner";
-      return `R16: W(${ra.home}/${ra.away}) vs W(${rb.home}/${rb.away})`;
+      if (!r16m.home && !r16m.away) return `R16: W(${ra.home}/${ra.away}) vs W(${rb.home}/${rb.away})`;
+      const hName = r16m.home ? tname(r16m.home) : `W(${ra.home}/${ra.away})`;
+      const aName = r16m.away ? tname(r16m.away) : `W(${rb.home}/${rb.away})`;
+      return `${hName} or ${aName} (R16)`;
     };
     return [r16Label(r16m1), r16Label(r16m2)];
   }
