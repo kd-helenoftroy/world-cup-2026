@@ -1118,29 +1118,62 @@ function renderPath() {
   </div>`;
 
   if (rank <= 2) {
-    const slot = rank === 1 ? `W-${g}` : `RU-${g}`;
-    const r32 = KNOCKOUTS.find((k) => k.slots && k.slots.includes(slot));
-    if (r32) {
-      const other = r32.slots.find((s) => s !== slot);
-      const oppText =
-        other === "3RD" ? r32.label.replace(/Winner \w vs /, "vs ") :
-        other.startsWith("W-") ? `vs Winner of Group ${other.slice(2)}` :
-        `vs Runner-up of Group ${other.slice(3)}`;
-      html += pathStepHTML(
-        rank === 1 ? `As Group ${g} winner` : `As Group ${g} runner-up`,
-        r32, oppText
-      );
+    const r32s = KNOCKOUTS.filter(k => k.stage === "Round of 32");
+    const r16s = KNOCKOUTS.filter(k => k.stage === "Round of 16");
+    const qfs  = KNOCKOUTS.filter(k => k.stage === "Quarterfinal");
+    const sfs  = KNOCKOUTS.filter(k => k.stage === "Semifinal");
+    const tname = c => TEAMS[c]?.name ?? c;
+    const mWinner = m => {
+      if (!Array.isArray(m.score)) return null;
+      if (m.pens) return m.pens[0] > m.pens[1] ? m.home : m.away;
+      return m.score[0] > m.score[1] ? m.home : m.score[1] > m.score[0] ? m.away : null;
+    };
+    const scoreStr = m => `${m.score[0]}–${m.score[1]}${m.pens ? ` (${m.pens[0]}–${m.pens[1]} pens)` : ""}`;
+
+    const r32Match = r32s.find(k => k.home === code || k.away === code);
+    if (r32Match) {
+      const r32Idx = r32s.indexOf(r32Match);
+      const r16Idx = r32Idx >> 1;
+      const qfIdx  = r16Idx >> 1;
+      const sfIdx  = qfIdx  >> 1;
+      // sibling = the other source match whose winner will be code's opponent at the next round
+      const sibR32 = r32s[r32Idx ^ 1];
+      const sibR16 = r16s[r16Idx ^ 1];
+
+      const steps = [
+        { m: r32Match,    label: rank === 1 ? `As Group ${g} winner` : `As Group ${g} runner-up`, sib: null },
+        { m: r16s[r16Idx], label: null, sib: sibR32 },
+        { m: qfs[qfIdx],   label: null, sib: sibR16 },
+        { m: sfs[sfIdx],   label: null, sib: null },
+      ];
+
+      let eliminated = false;
+      for (const { m, label, sib } of steps) {
+        if (!m) break;
+        const done  = Array.isArray(m.score);
+        const inMatch = m.home === code || m.away === code;
+        const opp   = inMatch ? (m.home === code ? m.away : m.home) : null;
+        let oppText;
+        if (done && opp) {
+          const verb = mWinner(m) === code ? "Beat" : "Lost to";
+          oppText = `${verb} ${tname(opp)} · ${scoreStr(m)}`;
+        } else if (opp) {
+          oppText = `vs ${tname(opp)}`;
+        } else if (sib?.home && sib?.away) {
+          const sibWin = Array.isArray(sib.score) ? mWinner(sib) : null;
+          oppText = sibWin ? `vs ${tname(sibWin)}` : `Winner: ${tname(sib.home)} vs ${tname(sib.away)}`;
+        } else {
+          oppText = "Opponent TBD";
+        }
+        const dateStr = new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" });
+        html += pathStepHTML(label ?? dateStr, m, oppText);
+        if (done && mWinner(m) !== code) { eliminated = true; break; }
+      }
+
+      if (!eliminated) {
+        html += pathStepHTML("The last match standing", KNOCKOUTS.find(k => k.stage === "Final"), `${T.name} lift the trophy?`, true);
+      }
     }
-    [["Round of 16", "Win and advance — opponent decided by the bracket"],
-     ["Quarterfinal", "Opponent decided by the bracket"],
-     ["Semifinal", "Opponent decided by the bracket"]].forEach(([stage, txt]) => {
-      const candidates = KNOCKOUTS.filter((k) => k.stage === stage);
-      const range = candidates.length > 1
-        ? `Played ${new Date(candidates[0].t).toLocaleDateString([], { month: "short", day: "numeric" })}–${new Date(candidates[candidates.length - 1].t).toLocaleDateString([], { month: "short", day: "numeric" })}`
-        : "";
-      html += pathStepHTML(range, candidates[0], txt);
-    });
-    html += pathStepHTML("The last match standing", KNOCKOUTS.find((k) => k.stage === "Final"), `${T.name} lift the trophy?`, true);
   } else if (rank === 3) {
     html += `<div class="pathstep"><div class="proj-elim">3rd place — must rank among the 8 best third-place teams across all 12 groups to advance to the Round of 32.</div></div>`;
   } else {
