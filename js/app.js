@@ -271,7 +271,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
 
   let statusChip = "";
   if (done) statusChip = `<span class="ft">${m.pens ? "AET" : "FT"}</span>`;
-  else if (live) statusChip = `<span class="soon">● LIVE${m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
+  else if (live) statusChip = `<span class="soon">● LIVE${m.livePens ? " · PENS" : m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
   else if (relDay(m.t) === "Today") statusChip = `<span class="soon">TODAY</span>`;
 
   const teamRowHTML = (code, fallback, score, scClass) => {
@@ -308,6 +308,10 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     const homeWon = m.pens[0] > m.pens[1];
     const winner = homeWon ? (TEAMS[m.home]?.name ?? m.home) : (TEAMS[m.away]?.name ?? m.away);
     penHTML = `<div class="pen-result">${winner} won ${homeWon ? m.pens[0] : m.pens[1]}–${homeWon ? m.pens[1] : m.pens[0]} on penalties</div>`;
+  } else if (!done && m.livePens) {
+    const hName = TEAMS[m.home]?.name.split(" ")[0] ?? m.home;
+    const aName = TEAMS[m.away]?.name.split(" ")[0] ?? m.away;
+    penHTML = `<div class="pen-result" style="color:var(--coral)">${hName} ${m.livePens[0]} – ${m.livePens[1]} ${aName}</div>`;
   }
 
   const localT = fmtTime(m.t);
@@ -1449,7 +1453,7 @@ function _applyESPNEvents(events, nameMap) {
     if (finished) {
       if (!Array.isArray(match.score)) {
         match.score = pair;
-        delete match.liveScore; delete match.liveAsOf; delete match.liveClock;
+        delete match.liveScore; delete match.liveAsOf; delete match.liveClock; delete match.livePens;
         changed = true;
       }
       if (!match.pens) {
@@ -1467,6 +1471,19 @@ function _applyESPNEvents(events, nameMap) {
       match.liveScore = pair;
       match.liveAsOf = new Date().toISOString();
       match.liveClock = clock;
+      // Track live penalty shootout score if ESPN is reporting it
+      const hPens = parseInt(home.shootoutScore ?? home.shootoutGoals, 10);
+      const aPens = parseInt(away.shootoutScore ?? away.shootoutGoals, 10);
+      if (!isNaN(hPens) && !isNaN(aPens)) {
+        const penPair = match.home === hCode ? [hPens, aPens] : [aPens, hPens];
+        if (!match.livePens || match.livePens[0] !== penPair[0] || match.livePens[1] !== penPair[1]) {
+          match.livePens = penPair;
+          changed = true;
+        }
+      } else if (match.livePens) {
+        delete match.livePens;
+        changed = true;
+      }
       if (scoreChanged) changed = true;
       else _updateAsOf(match);
     }
