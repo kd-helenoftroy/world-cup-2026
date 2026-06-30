@@ -1450,6 +1450,7 @@ function startLivePoller() {
   async function tick() {
     const changed = await _pollESPN(nameMap);
     if (changed) {
+      propagateKnockoutWinners();
       refreshModel();
       if ($("#view-schedule.active")) renderSchedule();
       if ($("#view-path.active")) renderPath();
@@ -1490,6 +1491,35 @@ async function loadLiveScores() {
   }));
 }
 
+// Walk completed knockout results forward through the bracket — R32→R16→QF→SF→Final.
+// Called after every ESPN fetch so the bracket always reflects the latest results.
+function propagateKnockoutWinners() {
+  const winner = (m) => {
+    if (!m || !Array.isArray(m.score)) return null;
+    if (m.pens) return m.pens[0] > m.pens[1] ? m.home : m.away;
+    return m.score[0] > m.score[1] ? m.home : m.score[1] > m.score[0] ? m.away : null;
+  };
+  const loser = (m) => { const w = winner(m); return w ? (w === m.home ? m.away : m.home) : null; };
+  const rounds = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal"];
+  const nextRounds = ["Round of 16", "Quarterfinal", "Semifinal", "Final"];
+  for (let ri = 0; ri < rounds.length; ri++) {
+    const src = KNOCKOUTS.filter(k => k.stage === rounds[ri]);
+    const dst = KNOCKOUTS.filter(k => k.stage === nextRounds[ri]);
+    for (let i = 0; i < dst.length; i++) {
+      const m = dst[i];
+      if (!m.home) { const w = winner(src[i * 2]);     if (w) { m.home = w; } }
+      if (!m.away) { const w = winner(src[i * 2 + 1]); if (w) { m.away = w; } }
+    }
+  }
+  // Third-place match: populated by SF losers
+  const sfs = KNOCKOUTS.filter(k => k.stage === "Semifinal");
+  const tp  = KNOCKOUTS.find(k => k.stage === "Third place");
+  if (tp) {
+    if (!tp.home) { const l = loser(sfs[0]); if (l) tp.home = l; }
+    if (!tp.away) { const l = loser(sfs[1]); if (l) tp.away = l; }
+  }
+}
+
 // Once group stage data is loaded, populate home/away on knockout matches
 // whose slots are definitively resolved (W-X and RU-X only; 3RD handled by ESPN).
 function resolveKnockoutTeams() {
@@ -1511,6 +1541,7 @@ function resolveKnockoutTeams() {
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([loadLiveScores(), loadPreviews(), loadRecapsJson(), loadPlayerPhotos()]);
   resolveKnockoutTeams();
+  propagateKnockoutWinners();
   refreshModel();
 
   // mark current tournament stage in the funnel
