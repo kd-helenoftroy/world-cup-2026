@@ -1120,8 +1120,9 @@ function renderPath() {
     ${allGroupUnplayed.length > 0 ? `<p class="proj-note">Unselected matches default to draws · toggle any match above to explore scenarios</p>` : ""}
   </div>`;
 
-  if (rank <= 2) {
-    const r32s = KNOCKOUTS.filter(k => k.stage === "Round of 32");
+  const r32s = KNOCKOUTS.filter(k => k.stage === "Round of 32");
+  const alreadyInKO = r32s.some(k => k.home === code || k.away === code);
+  if (rank <= 2 || alreadyInKO) {
     const r16s = KNOCKOUTS.filter(k => k.stage === "Round of 16");
     const qfs  = KNOCKOUTS.filter(k => k.stage === "Quarterfinal");
     const sfs  = KNOCKOUTS.filter(k => k.stage === "Semifinal");
@@ -1177,7 +1178,7 @@ function renderPath() {
         html += pathStepHTML("The last match standing", KNOCKOUTS.find(k => k.stage === "Final"), `${T.name} lift the trophy?`, true);
       }
     }
-  } else if (rank === 3) {
+  } else if (rank === 3 && !alreadyInKO) {
     html += `<div class="pathstep"><div class="proj-elim">3rd place — must rank among the 8 best third-place teams across all 12 groups to advance to the Round of 32.</div></div>`;
   } else {
     html += `<div class="pathstep"><div class="proj-elim out">4th place — eliminated at the group stage.</div></div>`;
