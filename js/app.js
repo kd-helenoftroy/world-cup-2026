@@ -285,17 +285,22 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   };
 
   let teamsHTML;
-  if (isKO && !m.away) {
+  if (!m.home && !m.away) {
     const [hLabel, aLabel] = koTeamLabels(m);
     teamsHTML = `<div class="teamrow tbd"><span class="tname">${hLabel}</span></div>` +
       (aLabel ? `<div class="teamrow tbd"><span class="tname">${aLabel}</span></div>` : "");
   } else {
     const sc = done ? m.score : liveSnap ? m.liveScore : null;
     const scClass = liveSnap && !done ? "tscore livesc" : "tscore";
-    const hLabel = m.slots?.[0] ? slotLabel(m.slots[0]) : "TBD";
-    const aLabel = m.slots?.[1] ? slotLabel(m.slots[1]) : "TBD";
-    teamsHTML = teamRowHTML(m.home, hLabel, sc?.[0], scClass) +
-                teamRowHTML(m.away, aLabel, sc?.[1], scClass);
+    let hFallback = m.slots?.[0] ? slotLabel(m.slots[0]) : "TBD";
+    let aFallback = m.slots?.[1] ? slotLabel(m.slots[1]) : "TBD";
+    if (!m.home || !m.away) {
+      const [koH, koA] = koTeamLabels(m);
+      if (!m.home) hFallback = koH;
+      if (!m.away) aFallback = koA;
+    }
+    teamsHTML = teamRowHTML(m.home, hFallback, sc?.[0], scClass) +
+                teamRowHTML(m.away, aFallback, sc?.[1], scClass);
   }
 
   let penHTML = "";
