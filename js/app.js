@@ -1452,6 +1452,14 @@ function _applyESPNEvents(events, nameMap) {
         delete match.liveScore; delete match.liveAsOf; delete match.liveClock;
         changed = true;
       }
+      if (!match.pens) {
+        const hPens = parseInt(home.shootoutScore ?? home.shootoutGoals, 10);
+        const aPens = parseInt(away.shootoutScore ?? away.shootoutGoals, 10);
+        if (!isNaN(hPens) && !isNaN(aPens)) {
+          match.pens = match.home === hCode ? [hPens, aPens] : [aPens, hPens];
+          changed = true;
+        }
+      }
     } else {
       const clock = status.displayClock || null;
       const scoreChanged = !match.liveScore || match.liveScore[0] !== pair[0] ||
@@ -1519,7 +1527,9 @@ async function loadLiveScores() {
   });
   const dates = new Set();
   for (const m of [...MATCHES, ...KNOCKOUTS]) {
-    if (Array.isArray(m.score)) continue;
+    // Also fetch knockout matches that have a score but no pens — may have been a shootout
+    const needsPens = Array.isArray(m.score) && !m.pens && !m.stage.startsWith("Group");
+    if (Array.isArray(m.score) && !needsPens) continue;
     const kickoff = new Date(m.t).getTime();
     if (kickoff > now + ACTIVE_WINDOW) continue;
     const d = new Date(m.t);
