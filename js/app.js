@@ -270,7 +270,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
   const live = !done && (liveSnap || (now >= ko && now - ko < 2.5 * 3600 * 1000));
 
   let statusChip = "";
-  if (done) statusChip = `<span class="ft">FT</span>`;
+  if (done) statusChip = `<span class="ft">${m.pens ? "AET" : "FT"}</span>`;
   else if (live) statusChip = `<span class="soon">● LIVE${m.liveClock ? ` ${m.liveClock}` : ""}</span>`;
   else if (relDay(m.t) === "Today") statusChip = `<span class="soon">TODAY</span>`;
 
@@ -296,6 +296,13 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     const aLabel = m.slots?.[1] ? slotLabel(m.slots[1]) : "TBD";
     teamsHTML = teamRowHTML(m.home, hLabel, sc?.[0], scClass) +
                 teamRowHTML(m.away, aLabel, sc?.[1], scClass);
+  }
+
+  let penHTML = "";
+  if (done && m.pens) {
+    const homeWon = m.pens[0] > m.pens[1];
+    const winner = homeWon ? (TEAMS[m.home]?.name ?? m.home) : (TEAMS[m.away]?.name ?? m.away);
+    penHTML = `<div class="pen-result">${winner} won ${homeWon ? m.pens[0] : m.pens[1]}–${homeWon ? m.pens[1] : m.pens[0]} on penalties</div>`;
   }
 
   const localT = fmtTime(m.t);
@@ -343,6 +350,7 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     <${tag}${ytAttr} tabindex="0" data-matchid="${m.id}">
       <div class="stage-tag"><span class="badge ${stageClass}">${m.stage}</span>${statusChip}</div>
       <div class="teams">${teamsHTML}</div>
+      ${penHTML}
       <div class="kick">
         <span class="clock">${localT.replace(/\s?(AM|PM)/i, "")}</span>
         <span class="ampm">${localT.match(/AM|PM/i)?.[0] ?? ""} · ${new Date(m.t).toLocaleDateString([], { month: "short", day: "numeric" })}</span>
@@ -951,8 +959,8 @@ function renderBracket(code) {
       top = { code: null, name: prevRound, flag: null };
       bot = { code: null, name: prevRound, flag: null };
     }
-    const topWon = done && m.score[0] > m.score[1];
-    const botWon = done && m.score[1] > m.score[0];
+    const topWon = done && (m.pens ? m.pens[0] > m.pens[1] : m.score[0] > m.score[1]);
+    const botWon = done && (m.pens ? m.pens[1] > m.pens[0] : m.score[1] > m.score[0]);
     const known = top.code !== null || bot.code !== null;
     return `<div class="brkt-match${known ? " brkt-known" : ""}" data-t="${m.t}" data-venue="${m.venue ?? ""}">${slotHTML(top, topWon, done && !topWon)}${slotHTML(bot, botWon, done && !botWon)}</div>`;
   };
@@ -1136,8 +1144,8 @@ function renderPath() {
   _injectRecaps();
   const koLoss = KNOCKOUTS.find(k =>
     Array.isArray(k.score) &&
-    ((k.home === code && k.score[0] < k.score[1]) ||
-     (k.away === code && k.score[1] < k.score[0]))
+    ((k.home === code && (k.pens ? k.pens[0] < k.pens[1] : k.score[0] < k.score[1])) ||
+     (k.away === code && (k.pens ? k.pens[1] < k.pens[0] : k.score[1] < k.score[0])))
   );
   const eliminatedGroup = allGroupUnplayed.length === 0 && rank === 4;
   const summaryTail = koLoss

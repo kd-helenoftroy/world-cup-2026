@@ -166,7 +166,7 @@ const KNOCKOUTS = [
      Source: espn.com/soccer/bracket visual order (top to bottom)
      GER+FRA→Match89  RSA+NED→Match90  POR+ESP→Match93  USA+BEL→Match94
      BRA+CIV→Match91  MEX+ENG→Match92  ARG+AUS→Match95  SUI+COL→Match96 */
-  { id: 75, espnId: 760489, stage: "Round of 32", t: "2026-06-29T16:30:00-04:00", home: "GER", away: "PAR", venue: "gillette" },
+  { id: 75, espnId: 760489, stage: "Round of 32", t: "2026-06-29T16:30:00-04:00", home: "GER", away: "PAR", venue: "gillette", score: [1, 1], pens: [3, 4] },
   { id: 78, espnId: 760492, stage: "Round of 32", t: "2026-06-30T17:00:00-04:00", home: "FRA", away: "SWE", venue: "metlife" },
   { id: 73, espnId: 760486, stage: "Round of 32", t: "2026-06-28T15:00:00-04:00", home: "RSA", away: "CAN", venue: "sofi" },
   { id: 76, espnId: 760488, stage: "Round of 32", t: "2026-06-29T21:00:00-04:00", home: "NED", away: "MAR", venue: "bbva" },

@@ -343,6 +343,7 @@ select.ctl:focus-visible, input.ctl:focus-visible { outline: 2px solid var(--pit
 .kick .vtime.asof { color: var(--coral); }
 .kick .vtime.asof b { color: var(--coral); }
 .teamrow.tbd .tname { color: var(--ink-soft); font-weight: 600; font-size: 14px; white-space: normal; }
+.pen-result { font-size: 12px; color: var(--ink-soft); text-align: center; padding: 2px 0 4px; }
 
 .kick {
   display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 2px;
