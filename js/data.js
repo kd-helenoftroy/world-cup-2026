@@ -185,11 +185,11 @@ const KNOCKOUTS = [
   /* ── Round of 16 ── consecutive pairs feed the same QF:
      (Match89/760503,Match90/760502)→QF97  (Match93/760506,Match94/760507)→QF98
      (Match91/760504,Match92/760505)→QF99  (Match95/760509,Match96/760508)→QF100 */
-  { id: 90, espnId: 760503, stage: "Round of 16", t: "2026-07-04T17:00:00-04:00", home: "CAN", away: "MAR", venue: "lincoln", score: [0, 3] },
-  { id: 89, espnId: 760502, stage: "Round of 16", t: "2026-07-04T13:00:00-04:00", home: "PAR", away: "FRA", venue: "nrg",     score: [0, 1] },
+  { id: 90, espnId: 760502, stage: "Round of 16", t: "2026-07-04T17:00:00-04:00", home: "CAN", away: "MAR", venue: "lincoln", score: [0, 3] },
+  { id: 89, espnId: 760503, stage: "Round of 16", t: "2026-07-04T13:00:00-04:00", home: "PAR", away: "FRA", venue: "nrg",     score: [0, 1] },
   { id: 93, espnId: 760506, stage: "Round of 16", t: "2026-07-06T15:00:00-04:00", home: "POR", away: "ESP", venue: "att" },
   { id: 94, espnId: 760507, stage: "Round of 16", t: "2026-07-06T20:00:00-04:00", home: "USA", away: "BEL", venue: "lumen" },
-  { id: 91, espnId: 760504, stage: "Round of 16", t: "2026-07-05T16:00:00-04:00", home: "BRA", away: "NOR", venue: "metlife", score: [0, 2] },
+  { id: 91, espnId: 760504, stage: "Round of 16", t: "2026-07-05T16:00:00-04:00", home: "BRA", away: "NOR", venue: "metlife", score: [1, 2] },
   { id: 92, espnId: 760505, stage: "Round of 16", t: "2026-07-05T20:00:00-04:00", home: "MEX", away: "ENG", venue: "azteca",  score: [2, 3] },
   { id: 95, espnId: 760509, stage: "Round of 16", t: "2026-07-07T12:00:00-04:00", home: "ARG", away: "EGY", venue: "mbs" },
   { id: 96, espnId: 760508, stage: "Round of 16", t: "2026-07-07T16:00:00-04:00", home: "SUI", away: "COL", venue: "bcplace" },
