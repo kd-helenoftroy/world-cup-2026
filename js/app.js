@@ -857,6 +857,16 @@ function koTeamLabels(m) {
     };
     return [r16Label(r16m1), r16Label(r16m2)];
   }
+  if (m.stage === "Semifinal") {
+    const sf = KNOCKOUTS.filter(k => k.stage === "Semifinal");
+    const i = sf.indexOf(m);
+    const qfLabel = (qfm) => {
+      if (!qfm) return "TBD";
+      if (qfm.home && qfm.away) return `Winner: ${tname(qfm.home)} vs ${tname(qfm.away)}`;
+      return "QF winner";
+    };
+    return [qfLabel(qf[i * 2]), qfLabel(qf[i * 2 + 1])];
+  }
   return [m.label ?? "TBD", null];
 }
 
