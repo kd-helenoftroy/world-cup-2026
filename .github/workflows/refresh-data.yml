@@ -123,6 +123,9 @@ jobs:
           git config user.name "wc26-score-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Update KO bracket (scores + advancing teams)
+        run: cd /tmp/repo && node scripts/update-bracket.mjs
+
       - name: Generate match previews
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -138,7 +141,7 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           cd /tmp/repo
-          git add previews.json recaps.json
+          git add js/data.js previews.json recaps.json
           if git diff --cached --quiet; then
             echo "No changes."
           else
