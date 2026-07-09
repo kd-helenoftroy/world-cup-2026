@@ -296,8 +296,8 @@ function ticketHTML(m, { showPred = true, showNote = true } = {}) {
     let aFallback = m.slots?.[1] ? slotLabel(m.slots[1]) : "TBD";
     if (!m.home || !m.away) {
       const [koH, koA] = koTeamLabels(m);
-      if (!m.home) hFallback = koH;
-      if (!m.away) aFallback = koA;
+      if (!m.home) hFallback = koH ?? "TBD";
+      if (!m.away) aFallback = koA ?? "TBD";
     }
     teamsHTML = teamRowHTML(m.home, hFallback, sc?.[0], scClass) +
                 teamRowHTML(m.away, aFallback, sc?.[1], scClass);
