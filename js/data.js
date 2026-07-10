@@ -196,10 +196,10 @@ const KNOCKOUTS = [
   /* ── Quarterfinals ── consecutive pairs feed the same SF:
      (QF97/760510,QF98/760511)→SF1/Match101  (QF99/760512,QF100/760513)→SF2/Match102 */
   { id: 97,  espnId: 760510, stage: "Quarterfinal", t: "2026-07-09T16:00:00-04:00", home: "FRA", away: "MAR", venue: "gillette", score: [2, 0] },
-  { id: 98,  espnId: 760511, stage: "Quarterfinal", t: "2026-07-10T15:00:00-04:00", home: "ESP", away: "BEL", venue: "sofi" },
+  { id: 98,  espnId: 760511, stage: "Quarterfinal", t: "2026-07-10T15:00:00-04:00", home: "ESP", away: "BEL", venue: "sofi", score: [2, 1] },
   { id: 99,  espnId: 760512, stage: "Quarterfinal", t: "2026-07-11T17:00:00-04:00", home: "NOR", away: "ENG", venue: "hardrock" },
   { id: 100, espnId: 760513, stage: "Quarterfinal", t: "2026-07-11T21:00:00-04:00", home: "ARG", away: "SUI", venue: "arrowhead" },
-  { id: 101, stage: "Semifinal",   t: "2026-07-14T15:00:00-04:00", label: "Quarterfinal winners", venue: "att" },
+  { id: 101, stage: "Semifinal",   t: "2026-07-14T15:00:00-04:00", label: "Quarterfinal winners", home: "FRA", away: "ESP", venue: "att" },
   { id: 102, stage: "Semifinal",   t: "2026-07-15T15:00:00-04:00", label: "Quarterfinal winners", venue: "mbs" },
   { id: 103, stage: "Third place", t: "2026-07-18T17:00:00-04:00", label: "Semifinal losers",     venue: "hardrock" },
   { id: 104, stage: "Final",       t: "2026-07-19T15:00:00-04:00", label: "Semifinal winners",    venue: "metlife" },
